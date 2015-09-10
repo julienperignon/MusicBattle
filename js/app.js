@@ -1,3 +1,4 @@
+/* global io */
 /* global noty */
 /* global angular */
 var app = angular.module('musicBattleApp', ['ngMessages']);
@@ -18,6 +19,10 @@ app.run(function($rootScope) {
   $rootScope.displayError = function(text){
     noty({text: text, type:'error'});
   };
+  
+   //Configuration socket.io
+   $rootScope.socket = io('http://localhost:3000');
+   console.log($rootScope.socket!=undefined);
   
    //Noty configuration
   $.noty.defaults = {

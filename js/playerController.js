@@ -19,9 +19,15 @@ angular.module('musicBattleApp').controller('PlayerController',function($rootSco
         return false;
     }
     $scope.players.push(playerName)
-    $rootScope.displayInformation(playerName + " joined the party !");
+    $rootScope.socket.emit('newPlayer', playerName);
+    
+    
     return true;
   };
+  
+  $rootScope.socket.on('playerJoined',function(data){
+    $rootScope.displayInformation(data.playerName + " joined the party !");
+  });
   
   var index = 0;
   //Test only
