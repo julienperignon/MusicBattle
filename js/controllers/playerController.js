@@ -1,11 +1,13 @@
+/* global angular */
 /* global $ */
 
 /* PlayerController */
-angular.module('musicBattleApp').controller('PlayerController',function($rootScope,$scope){
+angular.module('musicBattleApp').controller('PlayerController',['$rootScope','$scope','playerService',function($rootScope,$scope,playerService){
   $scope.players = [];
   $scope.playerName = null;
   $scope.playerSet = false;
   
+  playerService.sayMoo();
   
   //Hit when a player is ready
   $scope.playerReady = function(){
@@ -36,4 +38,4 @@ angular.module('musicBattleApp').controller('PlayerController',function($rootSco
       $scope.addPlayer("Player "+index++);
   }
   
-});
+}]);
