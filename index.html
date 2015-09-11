@@ -13,39 +13,56 @@
 		
 		<!--Services -->
 		<script src="js/services/playerService.js"></script>
+		<script src="js/services/socketService.js"></script>
+		<script src="js/services/notificationService.js"></script>
+		<script src="js/services/chatService.js"></script>
 		
 		<!-- Controllers -->
 		<script src="js/controllers/playerController.js"></script>
 		<script src="js/controllers/themeController.js"></script>
+		<script src="js/controllers/chatController.js"></script>
 		
 	</head>	
 	<body>
 		<div ng-controller="PlayerController">
-			<div ng-show="playerSet">
-				Welcome <b>{{playerName}}</b>
+			
+			<!--Test purpose only, simlates new player-->
+			<div ng-show="playerSet()">			
 				<input type="button" ng-click="simulateNewPlayer()" value="Simulate !" ng-show="testMode" />
 			</div>
-			<div ng-show="!playerSet">
+			
+			<!--Player name selection-->
+			<div ng-show="!playerSet()">
 				<form  name="playerForm" ng-submit="playerForm.$valid && playerReady()">
 					Hey ! Welcome here! What's your name ?<br />
 					<input type="text" ng-model="playerName" name="playerName" required ng-minlength="4"><br />
 					
+					<!--Error messages due to form validation-->
 					 <div ng-messages="playerForm.playerName.$error" ng-show="playerForm.$dirty" ng-messages-multiple>
 						<p ng-message="minlength">Your name is too short.</p>
 						<p ng-message="required">Your name is required.</p>
 					</div>
 
-					
-					<!--<input type="button" ng-click="playerReady()" value="Fight !" ng-disabled="playerForm.playerName.$error.required || playerForm.playerName.$error.minlength " />-->
 				</form>
 			</div>
-			<div ng-show="playerSet">
+			<!--List of players playing at the moment-->
+			<div ng-show="playerSet()">
 					These are the players playing at the moment : 
-				<span style="display:block" ng-repeat="(key, value) in players">{{value}}</span>	
+				<span style="display:block" ng-repeat="(key, value) in playerService.players">{{value}}</span>	
 			</div>
+			
+		</div>
+		
+		<!-- User chat -->
+		<div ng-controller="ChatController" ng-show="playerService.playerInformations.isSet" >	
+			<form  name="chatForm" ng-submit="sendMessage()">		
+				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="message" ng-model="message" />
+				<span style="display:block" ng-model-options="{ updateOn: 'submit'}"  ng-repeat="(key, value) in messages"><b>{{value.playerName}}</b>:{{value.message}}</span>				
+			</form> 
 			
 			
 		</div>
+		
 		
 		<!--Theme selection -->
 		<div ng-controller="ThemeController" ng-show="playing && mustSelectTheme" >
