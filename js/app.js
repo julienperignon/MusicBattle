@@ -8,6 +8,7 @@ app.run(function($rootScope) {
   //To Enable test options
   $rootScope.testMode = true;
   
+  $rootScope.playerName = '';
   $rootScope.mustSelectTheme = false;
   
   $rootScope.displaySuccess = function(text){
@@ -21,9 +22,8 @@ app.run(function($rootScope) {
   };
   
    //Configuration socket.io
-   $rootScope.socket = io('http://localhost:3000');
-   console.log($rootScope.socket!=undefined);
-  
+   $rootScope.socket = io('http://localhost:4000');
+     
    //Noty configuration
   $.noty.defaults = {
     layout: 'bottom',
