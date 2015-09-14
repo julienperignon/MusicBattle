@@ -1,7 +1,7 @@
 /* global $ */
 /* global app */
 /* global factory */
-app.service('playerService', ['$rootScope','socketService','notificationService',function($rootScope,socketService,notificationService) {
+app.service('playerService', ['$rootScope','$http','socketService','notificationService',function($rootScope,$http,socketService,notificationService) {
     console.log("playerService loaded");
     var self = this;
     this.players = [];
@@ -31,6 +31,19 @@ app.service('playerService', ['$rootScope','socketService','notificationService'
         socketService.socket.emit('newPlayer', value);
         return true;
     };
+    
+    //Api
+    this.initPlayers = function(){
+        $http.get($rootScope.urlSocketServer + "/players").then(function(res){
+            self.players = [];
+            for(var jsonProp in res.data){
+                self.players.push(res.data[jsonProp]);    
+            }
+            
+        });
+        
+    }
+    
     
     //Socket events
     

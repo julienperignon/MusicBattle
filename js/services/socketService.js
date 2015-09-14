@@ -1,10 +1,10 @@
 /* global app */
 /* global factory */
-app.service('socketService', [function() {
+app.service('socketService', ['$rootScope',function($rootScope) {
     
     console.log("socketService loaded");
     
     //Configuration socket.io 
-    this.socket = io('http://localhost:4000');
+    this.socket = io($rootScope.urlSocketServer);
 
 }]);

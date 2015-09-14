@@ -13,6 +13,7 @@ angular.module('musicBattleApp').controller('PlayerController',['$rootScope','$s
     if(playerService.addPlayer($scope.playerName)){
       console.log("Player " + $scope.playerName + " ready");
       playerService.setPlayerName($scope.playerName);
+      playerService.initPlayers();
     }
   };
   

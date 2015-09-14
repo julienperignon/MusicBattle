@@ -1,7 +1,18 @@
 /* global process */
 // Setup basic express server
+
+//CORS middleware
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    next();
+}
+
 var express = require('express');
 var app = express();
+app.use(allowCrossDomain);
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 4000;
@@ -14,6 +25,11 @@ server.listen(port, function () {
 var playerNames = {};
 var numberOfPlayers = 0;
 
+app.get('/players', function (req, res) {
+  res.send(JSON.stringify(playerNames));
+});
+
+//Socket IO
 io.on('connection', function (socket) {
   var addedUser = false;
   
