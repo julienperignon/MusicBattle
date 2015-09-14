@@ -1,23 +1,19 @@
 /* global app */
 /* global factory */
-app.service('chatService', ['socketService',function(socketService) {
+app.service('chatService', ['$rootScope','socketService',function($rootScope,socketService) {
 	
-	 
-// 	
-// 	this.messages = [];
-// 
-// 	function addMessage(data){
-// 		this.messages.push({playerName : data.playerName, message : data.message})
-// 	}
-// 	
-// 	socketService.socket.on("newMessage",function(data){
-// 		console.log('newMessage');
-// 		addMessage(data);
-// 		console.log(data.playerName + ":" + data.message);
-// 	});
-// 	
-// 	this.sendMessage = function(message){
-// 		socketService.socket.emit("sendMessage",{message:message})
-// 	}
+	var self = this;
+	this.messages = [];
+
+	socketService.socket.on("message:new",function(data){
+		console.log("received : " + data);
+		self.messages.push({playerName : data.playerName, message : data.message});
+		//force refresh
+		$rootScope.$apply();
+	});
+	
+	this.sendMessage = function(message){
+		socketService.socket.emit("message:send",message);
+	}
 
 }]);

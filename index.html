@@ -58,7 +58,7 @@
 			<form  name="chatForm" ng-submit="sendMessage()">		
 				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="message" ng-model="message" />
 			</form> 
-			<span style="display:block" ng-model-options="{ updateOn: 'submit'}"  ng-repeat="(key, value) in messages"><b>{{value.playerName}}</b>:{{value.message}}</span>
+			<span style="display:block" ng-model-options="{ updateOn: 'submit'}"  ng-repeat="(key, value) in chatService.messages"><b>{{value.playerName}}</b>:{{value.message}}</span>
 			
 		</div>
 		

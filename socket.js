@@ -33,8 +33,8 @@ app.get('/players', function (req, res) {
 io.on('connection', function (socket) {
   var addedUser = false;
   
-  socket.on('newPlayer', function (playerName) {
-    console.log("newPlayer:"+playerName );
+  socket.on('player:new', function (playerName) {
+    console.log("player:new:"+playerName );
     // we store the playerName in the socket session for this client
     socket.playerName = playerName;
     // add the playerList to the global list
@@ -43,21 +43,23 @@ io.on('connection', function (socket) {
     addedUser = true;
     
     //A new player joined
-    io.emit('playerJoined', {
+    io.emit('player:joined', {
       playerName: socket.playerName
+    });
+    
+     //A user sent a message
+    socket.on('message:send',function(data){  
+      console.log(socket.playerName + ":" +data);
+   
+      io.emit('message:new', {
+          playerName: socket.playerName,
+          message : data
+        }); 
     });
     
   }); 
   
+    
   
-  
-  //A user sent a message
-  socket.on('sendMessage',function(data){  
-  console.log(socket.playerName + ":" +data);
-  
-  io.emit('newMessage', {
-      playerName: socket.playerName,
-      message : data
-    }); 
-  });
+ 
 })

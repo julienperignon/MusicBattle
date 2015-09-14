@@ -28,7 +28,7 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
             notificationService.displayError("Sorry, " + value + " already joined the party !")
             return false;
         }
-        socketService.socket.emit('newPlayer', value);
+        socketService.socket.emit('player:new', value);
         return true;
     };
     
@@ -48,7 +48,7 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
     //Socket events
     
     //A new player joined
-    socketService.socket.on('playerJoined',function(data){
+    socketService.socket.on('player:joined',function(data){
         if(data.playerName!= self.playerInformations.name)
             notificationService.displayInformation(data.playerName + " joined the party !");
         self.players.push(data.playerName);
