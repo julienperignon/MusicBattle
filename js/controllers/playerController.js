@@ -5,13 +5,9 @@
 angular.module('musicBattleApp').controller('PlayerController',['$rootScope','$scope','playerService','socketService','notificationService',
   function($rootScope,$scope,playerService,socketService,notificationService){
  
-  $scope.playerSet = function()
-  {
-    return playerService.playerInformations.isSet; 
-  };
-  $scope.players = [];
+  $scope.playerService = playerService;
   $scope.playerName = null;
-  
+    
   //Hit when a player is ready
   $scope.playerReady = function(){
     if(playerService.addPlayer($scope.playerName)){

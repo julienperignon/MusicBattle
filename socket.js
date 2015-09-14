@@ -25,12 +25,15 @@ io.on('connection', function (socket) {
     playerNames[playerName] = playerName;
     ++numberOfPlayers;
     addedUser = true;
+    
+    //A new player joined
+    io.emit('playerJoined', {
+      playerName: socket.playerName
+    });
+    
   }); 
   
-  //A new player joined
-  socket.broadcast.emit('playerJoined', {
-    playerName: socket.playerName
-  });
+  
   
   //A user sent a message
   socket.on('sendMessage',function(data){  

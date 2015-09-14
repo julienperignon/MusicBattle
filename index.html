@@ -27,12 +27,12 @@
 		<div ng-controller="PlayerController">
 			
 			<!--Test purpose only, simlates new player-->
-			<div ng-show="playerSet()">			
+			<div ng-show="playerService.canPlay()">			
 				<input type="button" ng-click="simulateNewPlayer()" value="Simulate !" ng-show="testMode" />
 			</div>
 			
 			<!--Player name selection-->
-			<div ng-show="!playerSet()">
+			<div ng-hide="playerService.canPlay()">
 				<form  name="playerForm" ng-submit="playerForm.$valid && playerReady()">
 					Hey ! Welcome here! What's your name ?<br />
 					<input type="text" ng-model="playerName" name="playerName" required ng-minlength="4"><br />
@@ -46,20 +46,19 @@
 				</form>
 			</div>
 			<!--List of players playing at the moment-->
-			<div ng-show="playerSet()">
+			<div ng-show="playerService.canPlay()">
 					These are the players playing at the moment : 
-				<span style="display:block" ng-repeat="(key, value) in playerService.players">{{value}}</span>	
+				<span style="display:block" ng-repeat="(key, playerName) in playerService.players">{{playerName}}</span>	
 			</div>
 			
 		</div>
 		
 		<!-- User chat -->
-		<div ng-controller="ChatController" ng-show="playerService.playerInformations.isSet" >	
+		<div ng-controller="ChatController" ng-show="playerService.canPlay()" >	
 			<form  name="chatForm" ng-submit="sendMessage()">		
 				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="message" ng-model="message" />
-				<span style="display:block" ng-model-options="{ updateOn: 'submit'}"  ng-repeat="(key, value) in messages"><b>{{value.playerName}}</b>:{{value.message}}</span>				
 			</form> 
-			
+			<span style="display:block" ng-model-options="{ updateOn: 'submit'}"  ng-repeat="(key, value) in messages"><b>{{value.playerName}}</b>:{{value.message}}</span>
 			
 		</div>
 		

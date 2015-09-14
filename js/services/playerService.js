@@ -1,9 +1,10 @@
+/* global $ */
 /* global app */
 /* global factory */
-app.service('playerService', ['socketService','notificationService',function(socketService,notificationService) {
+app.service('playerService', ['$rootScope','socketService','notificationService',function($rootScope,socketService,notificationService) {
     console.log("playerService loaded");
-    
-    var players = [];
+    var self = this;
+    this.players = [];
     
     //Holds data for the current player
     this.playerInformations = {
@@ -17,13 +18,16 @@ app.service('playerService', ['socketService','notificationService',function(soc
         this.playerInformations.isSet = true;
     }
     
+    this.canPlay = function(){
+        return this.playerInformations.isSet;
+    }
+    
     //Adds a player to the game
     this.addPlayer = function(value){
-        if($.inArray(value, players) >=0){
+        if($.inArray(value, this.players) >=0){
             notificationService.displayError("Sorry, " + value + " already joined the party !")
             return false;
         }
-        players.push(value)
         socketService.socket.emit('newPlayer', value);
         return true;
     };
@@ -32,7 +36,10 @@ app.service('playerService', ['socketService','notificationService',function(soc
     
     //A new player joined
     socketService.socket.on('playerJoined',function(data){
-        notificationService.displayInformation(data.playerName + " joined the party !");
+        if(data.playerName!= self.playerInformations.name)
+            notificationService.displayInformation(data.playerName + " joined the party !");
+        self.players.push(data.playerName);
+        $rootScope.$apply();
     });
    
 }]);
