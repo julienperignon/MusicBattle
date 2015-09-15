@@ -28,7 +28,7 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
             notificationService.displayError("Sorry, " + value + " already joined the party !")
             return false;
         }
-        socketService.socket.emit('player:new', value);
+        socketService.socket.emit('client:player:new', value);
         return true;
     };
     
@@ -48,11 +48,22 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
     //Socket events
     
     //A new player joined
-    socketService.socket.on('player:joined',function(data){
+    socketService.socket.on('server:player:new',function(data){
         if(data.playerName!= self.playerInformations.name)
             notificationService.displayInformation(data.playerName + " joined the party !");
         self.players.push(data.playerName);
         $rootScope.$apply();
+    });
+    
+    //A player left
+    socketService.socket.on('server:player:left',function(data){
+        notificationService.displayInformation(data.playerName + " left the party !");
+        var index = self.players.indexOf(data.playerName);
+        if(index > -1){
+            self.players.splice(index,1);
+            $rootScope.$apply();    
+        }
+        
     });
    
 }]);
