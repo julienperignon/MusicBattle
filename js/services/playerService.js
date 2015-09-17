@@ -18,10 +18,8 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
         this.playerInformations.isSet = true;
     }
     
-    this.canPlay = function(){
-        return this.playerInformations.isSet;
-    }
-    
+    // this.canPlay = this.playerInformations.isSet;
+     
     //Adds a player to the game
     this.addPlayer = function(value){
         if($.inArray(value, this.players) >=0){

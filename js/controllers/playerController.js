@@ -5,9 +5,26 @@
 angular.module('musicBattleApp').controller('PlayerController',['$rootScope','$scope','playerService','socketService','notificationService',
   function($rootScope,$scope,playerService,socketService,notificationService){
  
-  $scope.playerService = playerService;
+  //Scope properties
+  $scope.players = [];
+  $scope.canPlay = playerService.canPlay;
   $scope.playerName = null;
+	
+  //Scope watchs
+	$scope.$watch(function(scope) { return playerService.playerInformations.isSet },
+      function(newValue) {
+          $scope.canPlay = newValue;
+      }
+    );
+  
+  $scope.$watch(function(scope) { return playerService.players },
+      function(newValue) {
+          $scope.players = newValue;
+      }
+    );
     
+  //Scope methods
+  
   //Hit when a player is ready
   $scope.playerReady = function(){
     if(playerService.addPlayer($scope.playerName)){
@@ -16,12 +33,5 @@ angular.module('musicBattleApp').controller('PlayerController',['$rootScope','$s
       playerService.initPlayers();
     }
   };
-  
-  var index = 0;
-  //Test only
-  $scope.simulateNewPlayer = function(){
-    if($rootScope.testMode)
-      playerService.addPlayer("Player "+index++);
-  }
   
 }]);

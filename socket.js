@@ -48,7 +48,7 @@ io.on('connection', function (socket) {
         });
 
         //A user sent a message
-        socket.on('client:message:new', function (data) {
+        socket.on('client:message:send', function (data) {
             console.log(socket.playerName + ":" + data);
 
             io.emit('server:message:new', {

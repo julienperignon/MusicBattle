@@ -1,3 +1,4 @@
+/* global io */
 /* global app */
 /* global factory */
 app.service('socketService', ['$rootScope',function($rootScope) {

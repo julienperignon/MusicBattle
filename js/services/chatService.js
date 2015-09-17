@@ -8,12 +8,13 @@ app.service('chatService', ['$rootScope','socketService',function($rootScope,soc
 
 	socketService.socket.on("server:message:new",function(data){
 		console.log("received : " + data);
-		self.messages.push({date : moment(), playerName : data.playerName, message : data.message});
+		self.messages.push({date : moment().format('HH:mm:ss'), playerName : data.playerName, message : data.message});
 		//force refresh
 		$rootScope.$apply();
 	});
 	
 	this.sendMessage = function(message){
+		console.log("this.sendMessage");
 		socketService.socket.emit("client:message:send",message);
 	}
 
