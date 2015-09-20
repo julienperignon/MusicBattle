@@ -17,18 +17,29 @@
 		<script src="js/services/socketService.js"></script>
 		<script src="js/services/notificationService.js"></script>
 		<script src="js/services/chatService.js"></script>
+		<script src="js/services/gameService.js"></script>
 		
 		<!-- Controllers -->
 		<script src="js/controllers/playerController.js"></script>
 		<script src="js/controllers/themeController.js"></script>
 		<script src="js/controllers/chatController.js"></script>
+		<script src="js/controllers/gameController.js"></script>
 		
 	</head>	
 	<body>
+		
+		<!-- Game informations -->
+		<div ng-controller="GameController" >
+			Player 1 : {{player1}}<br />
+			Player 2 : {{player2}}<br />
+			CanPlay? : {{canPlay}}<br />
+			Playing? : {{playing}}<br />
+		</div>
+		
 		<div ng-controller="PlayerController">
 						
 			<!--Player name selection-->
-			<div ng-hide="canPlay">
+			<div ng-hide="isLoggedIn">
 				<form  name="playerForm" ng-submit="playerForm.$valid && playerReady()">
 					Hey ! Welcome here! What's your name ?<br />
 					<input type="text" ng-model="playerName" name="playerName" required ng-minlength="4"><br />
@@ -42,7 +53,7 @@
 				</form>
 			</div>
 			<!--List of players playing at the moment-->
-			<div ng-show="canPlay">
+			<div ng-show="isLoggedIn">
 					These are the players playing at the moment : 
 				<span style="display:block" ng-repeat="(key, playerName) in players">{{playerName}}</span>	
 			</div>
@@ -50,7 +61,7 @@
 		</div>
 		
 		<!-- User chat -->
-		<div ng-controller="ChatController" ng-show="canPlay" >	
+		<div ng-controller="ChatController" ng-show="isLoggedIn" >	
 			<form  name="chatForm" ng-submit="sendMessage()">		
 				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="message" ng-model="message" />
 			</form> 
@@ -65,6 +76,8 @@
 			<select ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes"></select>
 			<input type="button" ng-click="themeSelected()" value="Select theme" />		
 		</div>
+		
+		
 	</body>
 	
 </html>

@@ -7,19 +7,20 @@ angular.module('musicBattleApp').controller('PlayerController',['$rootScope','$s
  
   //Scope properties
   $scope.players = [];
-  $scope.canPlay = playerService.canPlay;
+  $scope.isLoggedIn = playerService.isLoggedIn;
   $scope.playerName = null;
 	
   //Scope watchs
-	$scope.$watch(function(scope) { return playerService.playerInformations.isSet },
+	$scope.$watch(function(scope) { return playerService.playerInformations.isLoggedIn },
       function(newValue) {
-          $scope.canPlay = newValue;
+          $scope.isLoggedIn = newValue;
       }
     );
   
   $scope.$watch(function(scope) { return playerService.players },
       function(newValue) {
-          $scope.players = newValue;
+         $scope.players = [];
+         $scope.players = newValue;
       }
     );
     

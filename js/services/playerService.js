@@ -6,16 +6,18 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
     var self = this;
     this.players = [];
     
+    
+    
     //Holds data for the current player
     this.playerInformations = {
         name : null,
-        isSet : false
+        isLoggedIn : false
     };
     
     //Sets current player name
     this.setPlayerName = function(value){
         this.playerInformations.name = value;
-        this.playerInformations.isSet = true;
+        this.playerInformations.isLoggedIn = true;
     }
     
     // this.canPlay = this.playerInformations.isSet;
@@ -42,6 +44,7 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
         
     }
     
+    this.initPlayers();
     
     //Socket events
     
@@ -50,7 +53,7 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
         if(data.playerName!= self.playerInformations.name)
             notificationService.displayInformation(data.playerName + " joined the party !");
         self.players.push(data.playerName);
-        $rootScope.$apply();
+        //$rootScope.$apply();
     });
     
     //A player left
@@ -59,7 +62,7 @@ app.service('playerService', ['$rootScope','$http','socketService','notification
         var index = self.players.indexOf(data.playerName);
         if(index > -1){
             self.players.splice(index,1);
-            $rootScope.$apply();    
+            //$rootScope.$apply();    
         }
         
     });

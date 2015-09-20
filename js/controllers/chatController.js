@@ -7,7 +7,7 @@ angular.module('musicBattleApp').controller('ChatController',['$scope','socketSe
 	//Scope properties
 	$scope.message =null;
 	$scope.messages=[];
-	$scope.canPlay = playerService.canPlay;;
+	$scope.isLoggedIn = playerService.isLoggedIn;
 	
 	//Scope Watchs
 	$scope.$watch(function(scope) { return chatService.messages },
@@ -16,9 +16,9 @@ angular.module('musicBattleApp').controller('ChatController',['$scope','socketSe
       }
     );
 	
-	$scope.$watch(function(scope) { return playerService.playerInformations.isSet },
+	$scope.$watch(function(scope) { return playerService.playerInformations.isLoggedIn },
       function(newValue) {
-          $scope.canPlay = newValue;
+          $scope.isLoggedIn = newValue;
       }
     );
 	

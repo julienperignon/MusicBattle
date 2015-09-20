@@ -23,11 +23,27 @@ server.listen(port, function () {
 
 
 var playerNames = {};
+var player1 = 'mofo1';
+var player2 = 'mofo2';
+
 var numberOfPlayers = 0;
 
 app.get('/players', function (req, res) {
     res.send(JSON.stringify(playerNames));
 });
+
+app.get('/status', function (req, res) {
+    res.send(getGameStatus());
+});
+
+function getGameStatus(){
+    return {
+            canPlay: numberOfPlayers >= 3,
+            playing: false,
+            player1: player1,
+            player2: player2
+        };
+}
 
 //Socket IO
 io.on('connection', function (socket) {
@@ -42,6 +58,16 @@ io.on('connection', function (socket) {
         ++numberOfPlayers;
         addedUser = true;
 
+        var status = getGameStatus();
+        //Can we play ? :D
+        io.emit('server:game:status', status);
+        
+        if(status.canPlay)
+        {
+            
+        }
+            
+        
         //A new player joined
         io.emit('server:player:new', {
             playerName: socket.playerName
@@ -74,4 +100,3 @@ io.on('connection', function (socket) {
         });
     })
 });
-
