@@ -1,11 +1,11 @@
 /* global io */
 /* global app */
 /* global factory */
-app.service('socketService', ['$rootScope',function($rootScope) {
+app.service('socketService', ['configurationService',function(configurationService) {
     
     console.log("socketService loaded");
     
     //Configuration socket.io 
-    this.socket = io($rootScope.urlSocketServer);
+    this.socket = io(configurationService.urlSocketServer);
 
 }]);
