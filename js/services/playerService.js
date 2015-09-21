@@ -1,7 +1,7 @@
 /* global $ */
 /* global app */
 /* global factory */
-app.service('playerService', ['$http','socketService','notificationService','configurationService',function($http,socketService,notificationService,configurationService) {
+app.service('playerService', ['$http','socketFactory','notificationService','configurationService',function($http,socketFactory,notificationService,configurationService) {
     console.log("playerService loaded");
     var self = this;
     this.players = [];
@@ -28,18 +28,14 @@ app.service('playerService', ['$http','socketService','notificationService','con
             notificationService.displayError("Sorry, " + value + " already joined the party !")
             return false;
         }
-        socketService.socket.emit('client:player:new', value);
+        socketFactory.emit('client:player:new', value);
         return true;
     };
     
     //Api
     this.initPlayers = function(){
         $http.get(configurationService.urlSocketServer + "/players").then(function(res){
-            self.players = [];
-            for(var jsonProp in res.data){
-                self.players.push(res.data[jsonProp]);    
-            }
-            
+            self.players = res.data;
         });
         
     }
@@ -49,7 +45,7 @@ app.service('playerService', ['$http','socketService','notificationService','con
     //Socket events
     
     //A new player joined
-    socketService.socket.on('server:player:new',function(data){
+    socketFactory.on('server:player:new',function(data){
         if(data.playerName!= self.playerInformations.name)
             notificationService.displayInformation(data.playerName + " joined the party !");
         self.players.push(data.playerName);
@@ -57,7 +53,7 @@ app.service('playerService', ['$http','socketService','notificationService','con
     });
     
     //A player left
-    socketService.socket.on('server:player:left',function(data){
+    socketFactory.on('server:player:left',function(data){
         notificationService.displayInformation(data.playerName + " left the party !");
         var index = self.players.indexOf(data.playerName);
         if(index > -1){

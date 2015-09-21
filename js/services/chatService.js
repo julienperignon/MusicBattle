@@ -1,12 +1,12 @@
 /* global moment */
 /* global app */
 /* global factory */
-app.service('chatService', ['$rootScope','socketService',function($rootScope,socketService) {
+app.service('chatService', ['$rootScope','socketFactory',function($rootScope,socketFactory) {
 	
 	var self = this;
 	this.messages = [];
 
-	socketService.socket.on("server:message:new",function(data){
+	socketFactory.on("server:message:new",function(data){
 		console.log(data);
 		self.messages.push({date : moment().format('HH:mm:ss'), playerName : data.playerName, message : data.message});
 		//force refresh
@@ -15,7 +15,7 @@ app.service('chatService', ['$rootScope','socketService',function($rootScope,soc
 	
 	this.sendMessage = function(message){
 		console.log("this.sendMessage");
-		socketService.socket.emit("client:message:send",message);
+		socketFactory.emit("client:message:send",message);
 	}
 
 }]);

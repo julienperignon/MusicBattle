@@ -6,11 +6,11 @@ angular.module('musicBattleApp').controller('GameController',['$scope','gameServ
   function($scope,gameService){
  
   //Scope properties
-  
   $scope.player1 = null;
   $scope.player2 = null;
   $scope.canPlay = null;
   $scope.playing = null;
+  $scope.choosingSongs = null;
   
   //Scope watchs
   $scope.$watch(function(scope) { return gameService.player1 },
@@ -31,6 +31,11 @@ angular.module('musicBattleApp').controller('GameController',['$scope','gameServ
   $scope.$watch(function(scope) { return gameService.playing },
     function(newValue) {
       $scope.playing = newValue;
+    }
+  );
+  $scope.$watch(function(scope) { return gameService.choosingSongs },
+    function(newValue) {
+      $scope.choosingSongs = newValue;
     }
   );
 }]);

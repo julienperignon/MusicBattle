@@ -2,8 +2,8 @@
 /* global $ */
 
 /* PlayerController */
-angular.module('musicBattleApp').controller('PlayerController',['$rootScope','$scope','playerService','socketService','notificationService',
-  function($rootScope,$scope,playerService,socketService,notificationService){
+angular.module('musicBattleApp').controller('PlayerController',['$rootScope','$scope','playerService','notificationService',
+  function($rootScope,$scope,playerService,notificationService){
  
   //Scope properties
   $scope.players = [];

@@ -10,6 +10,7 @@ var allowCrossDomain = function (req, res, next) {
     next();
 }
 
+//Server configuration
 var express = require('express');
 var app = express();
 app.use(allowCrossDomain);
@@ -21,13 +22,16 @@ server.listen(port, function () {
     console.log('Server listening at port %d', port);
 });
 
+var self = this;
+//Game informations
+var playerNames = [];
+var player1 = null;
+var player2 = null;
+var choosingSongs = false;
+var playing = false;
+var numberOfPlayers = 0;;
 
-var playerNames = {};
-var player1 = 'mofo1';
-var player2 = 'mofo2';
-
-var numberOfPlayers = 0;
-
+//API Routes
 app.get('/players', function (req, res) {
     res.send(JSON.stringify(playerNames));
 });
@@ -36,16 +40,8 @@ app.get('/status', function (req, res) {
     res.send(getGameStatus());
 });
 
-function getGameStatus(){
-    return {
-            canPlay: numberOfPlayers >= 3,
-            playing: false,
-            player1: player1,
-            player2: player2
-        };
-}
 
-//Socket IO
+//Socket IO & game logic workflow
 io.on('connection', function (socket) {
     var addedUser = false;
 
@@ -54,19 +50,12 @@ io.on('connection', function (socket) {
         // we store the playerName in the socket session for this client
         socket.playerName = playerName;
         // add the playerList to the global list
-        playerNames[playerName] = playerName;
+        playerNames.push(playerName);
         ++numberOfPlayers;
         addedUser = true;
 
-        var status = getGameStatus();
-        //Can we play ? :D
-        io.emit('server:game:status', status);
-        
-        if(status.canPlay)
-        {
-            
-        }
-            
+        //We update the status, maybe we are more than 2 and can play :D 
+        updateGameStatus();
         
         //A new player joined
         io.emit('server:player:new', {
@@ -88,9 +77,16 @@ io.on('connection', function (socket) {
             console.log("player left : " + socket.playerName);
             if (addedUser) {
                 console.log("deleting from players")
-                delete playerNames[socket.playerName];
-                --numberOfPlayers;
-
+                 var index = playerNames.indexOf(socket.playerName);
+                if(index > -1){
+                    playerNames.splice(index,1);
+                    --numberOfPlayers;
+                }
+                
+                
+                //We update the status, maybe we can't play anymore :'(, or maybe we still can :D
+                updateGameStatus();
+                    
                 // echo globally that this client has left
                 socket.broadcast.emit('server:player:left', {
                     playerName: socket.playerName,
@@ -100,3 +96,70 @@ io.on('connection', function (socket) {
         });
     })
 });
+
+//Functions
+
+//picks up 2 random players in every player connected
+function getTwoRandomPlayers(){
+    
+    var randomIndex = Math.floor(Math.random()*playerNames.length);
+    var player1 = playerNames[randomIndex];
+    var player2 = null;
+    
+    do{
+        player2 = playerNames[Math.floor(Math.random()*playerNames.length)];
+    }
+    while(player1 === player2)
+    
+    return {
+        player1 : player1,
+        player2 : player2
+    }
+    
+}
+
+//Update the game status and emits a message
+function updateGameStatus(){
+             
+    var indexPlayer1 = playerNames.indexOf(player1);
+    var indexPlayer2 = playerNames.indexOf(player2);
+    
+    //One of the the player is not here anymore
+    if(indexPlayer1 <= -1 || indexPlayer2 <= -1){
+        self.player1 = null;
+        self.player2=null;
+        self.playing=false;
+    }
+    
+    //We can play and we are not playing already, let's start a new game!
+    if(self.canPlay && !self.playing)
+    {
+        //First get two players randomly
+        var chosenOnes = getTwoRandomPlayers();
+        self.player1 = chosenOnes.player1;
+        self.player2 = chosenOnes.player2;
+        //change the current status of the game to tell players the battle has begun
+        self.choosingSongs = true;
+        
+        console.log("Player1 :" + self.player1);
+        console.log("Player2:" +  self.player2);
+        
+        io.to(self.player1).emit('server:game:choosesong');
+        io.to(self.player2).emit('server:game:choosesong');
+                    
+    }
+    
+    //Emit to client the updated game status
+    io.emit('server:game:status',getGameStatus());  
+    
+}
+
+function getGameStatus(){
+   return  {
+        canPlay : self.canPlay,
+        choosingSongs : self.choosingSongs,
+        player1 : self.player1,
+        player2 : self.player2,
+        playing : self.playing
+    };
+}

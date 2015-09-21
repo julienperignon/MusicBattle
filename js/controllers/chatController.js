@@ -2,7 +2,7 @@
 //Chat controller
 //Handles(inbound and outbound) messages for the chat
 
-angular.module('musicBattleApp').controller('ChatController',['$scope','socketService',"chatService","playerService",function($scope,socketService,chatService,playerService){
+angular.module('musicBattleApp').controller('ChatController',['$scope',"chatService","playerService",function($scope,chatService,playerService){
 	
 	//Scope properties
 	$scope.message =null;

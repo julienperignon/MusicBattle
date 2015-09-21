@@ -12,9 +12,10 @@
 		<!-- Music Battle modules -->
 		<script src="js/app.js"></script>
 		
+		<!--Factories-->
+		<script src="js/factories/socketFactory.js"></script>
 		<!--Services -->
 		<script src="js/services/playerService.js"></script>
-		<script src="js/services/socketService.js"></script>
 		<script src="js/services/notificationService.js"></script>
 		<script src="js/services/chatService.js"></script>
 		<script src="js/services/configurationService.js"></script>
@@ -35,6 +36,7 @@
 			Player 2 : {{player2}}<br />
 			CanPlay? : {{canPlay}}<br />
 			Playing? : {{playing}}<br />
+			ChoosingSongs? : {{choosingSongs}}<br />
 		</div>
 		
 		<div ng-controller="PlayerController">
