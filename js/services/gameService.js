@@ -1,7 +1,7 @@
 /* global moment */
 /* global app */
 /* global factory */
-app.service('gameService', ['$rootScope','$http','socketService',function($rootScope,$http,socketService) {
+app.service('gameService', ['$http','socketService','configurationService',function($http,socketService,configurationService) {
 	
 	var self = this;
 	
@@ -23,7 +23,7 @@ app.service('gameService', ['$rootScope','$http','socketService',function($rootS
 	function getGameStatus(data){
 		if(data === undefined)
 		{
-			$http.get($rootScope.urlSocketServer + "/status").then(function(res){
+			$http.get(configurationService.urlSocketServer + "/status").then(function(res){
 				setGameStatutFromJsondata(res.data);
 			});
 		}
