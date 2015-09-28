@@ -80,6 +80,14 @@
 			<input type="button" ng-click="themeSelected()" value="Select theme" />		
 		</div>
 		
+		<!-- Song selection -->
+		<div ng-controller="GameController" ng-show="mustChooseSong" >
+			<form  name="songForm" ng-submit="chooseSong()">	
+				You must choose a song (requires youtube link): <br />
+				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="songLink" ng-model="songLink" />
+			</form>
+		</div>
+		 
 		
 	</body>
 	

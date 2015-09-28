@@ -11,6 +11,7 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	this.playing = null
 	this.player1 = null;
 	this.player2 = null;
+	this.mustChooseSong = false;
 	
 	getGameStatus();
 	
@@ -21,9 +22,19 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	
 	//We are told to choose a song ! Do so :)
 	socketFactory.on("server:game:choosesong",function(data){
-		//For now only emitting a notification
+		self.mustChooseSong = true;
 		notificationService.displayInformation("You have been chosen to play !");
 	});
+	
+	//A song has been chosen
+	socketFactory.on("server:game:chosesong",function(data){;
+		notificationService.displayInformation(data.playerName +" chose the song" + data.songLink);
+	});
+	
+	//When a player chose a song from the UI
+	this.chooseSong = function(songLink){
+		socketFactory.emit("client:game:chosesong",songLink);	
+	}
 	
 	//Get the game status server side
 	function getGameStatus(data){

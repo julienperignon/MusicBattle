@@ -48,7 +48,12 @@ app.service('playerService', ['$http','socketFactory','notificationService','con
     socketFactory.on('server:player:new',function(data){
         if(data.playerName!= self.playerInformations.name)
             notificationService.displayInformation(data.playerName + " joined the party !");
-        self.players.push(data.playerName);
+        if(self.players.indexOf(data.playerName) > -1)
+        {
+            self.players.push(data.playerName);    
+        }
+        
+        
         //$rootScope.$apply();
     });
     

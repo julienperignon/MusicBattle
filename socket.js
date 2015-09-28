@@ -30,6 +30,7 @@ var player2 = null;
 var choosingSongs = false;
 var playing = false;
 var numberOfPlayers = 0;;
+var sockets= [];
 
 //API Routes
 app.get('/players', function (req, res) {
@@ -53,7 +54,7 @@ io.on('connection', function (socket) {
         playerNames.push(playerName);
         ++numberOfPlayers;
         addedUser = true;
-
+        sockets[playerName] = socket;    
         //We update the status, maybe we are more than 2 and can play :D 
         updateGameStatus();
         
@@ -68,7 +69,17 @@ io.on('connection', function (socket) {
 
             io.emit('server:message:new', {
                 playerName: socket.playerName,
-                message: data
+                songLink: data
+            });
+        });
+        
+        //A user chose a song
+        socket.on('client:game:chosesong', function (data) {
+            console.log("client:game:chosesong" + socket.playerName + ":" + data);
+
+            io.emit('server:game:chosesong', {
+                playerName: socket.playerName,
+                songLink: data
             });
         });
 
@@ -131,6 +142,8 @@ function updateGameStatus(){
         self.playing=false;
     }
     
+    self.canPlay = playerNames.length >= 3;
+    
     //We can play and we are not playing already, let's start a new game!
     if(self.canPlay && !self.playing)
     {
@@ -143,10 +156,15 @@ function updateGameStatus(){
         
         console.log("Player1 :" + self.player1);
         console.log("Player2:" +  self.player2);
+  
         
-        io.to(self.player1).emit('server:game:choosesong');
-        io.to(self.player2).emit('server:game:choosesong');
+        io.to(sockets[self.player1].id).emit('server:game:choosesong');
+        io.to(sockets[self.player2].id).emit('server:game:choosesong');
                     
+                    
+    }
+    else{
+        self.choosingSongs = false;
     }
     
     //Emit to client the updated game status
