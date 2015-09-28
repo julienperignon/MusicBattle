@@ -27,6 +27,8 @@ var self = this;
 var playerNames = [];
 var player1 = null;
 var player2 = null;
+var player1ChoseSong = false;
+var player2ChoseSong = false;
 var choosingSongs = false;
 var playing = false;
 var numberOfPlayers = 0;;
@@ -76,13 +78,21 @@ io.on('connection', function (socket) {
         //A user chose a song
         socket.on('client:game:chosesong', function (data) {
             console.log("client:game:chosesong" + socket.playerName + ":" + data);
-
+            
+            if(socket.playerName === player1)
+                self.player1ChoseSong = true;
+            else if(socket.playerName === player2)
+                self.player2ChoseSong = true;
+                
             io.emit('server:game:chosesong', {
                 playerName: socket.playerName,
                 songLink: data
             });
+            
+            updateGameStatus();
         });
 
+        //User disconnected
         socket.on('disconnect', function () {
             // remove the playername from global playernames list
             console.log("player left : " + socket.playerName);
@@ -142,7 +152,11 @@ function updateGameStatus(){
         self.playing=false;
     }
     
+    //We can only start playing if we are 3 or more
     self.canPlay = playerNames.length >= 3;
+    
+    //We are playing if the the two player chose their respective song
+    self.playing = self.player1ChoseSong & self.player2ChoseSong;
     
     //We can play and we are not playing already, let's start a new game!
     if(self.canPlay && !self.playing)
@@ -157,9 +171,9 @@ function updateGameStatus(){
         console.log("Player1 :" + self.player1);
         console.log("Player2:" +  self.player2);
   
-        
-        io.to(sockets[self.player1].id).emit('server:game:choosesong');
-        io.to(sockets[self.player2].id).emit('server:game:choosesong');
+        //Emit the chosen player that they are the lucky ones !
+        io.to(sockets[self.player1].id).emit('server:game:choosesong',{position:1});
+        io.to(sockets[self.player2].id).emit('server:game:choosesong',{position:2});
                     
                     
     }

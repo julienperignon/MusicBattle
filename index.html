@@ -87,7 +87,12 @@
 				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="songLink" ng-model="songLink" />
 			</form>
 		</div>
-		 
+		 <div style="display-inline" ng-controller="GameController" ng-show="playing">
+			 <div style="display:inline;width:40%;background-color:red" id="video1">
+			</div>
+			<div style="display:inline;width:40%;background-color:blue" id="video2">
+			</div>
+		</div>
 		
 	</body>
 	
