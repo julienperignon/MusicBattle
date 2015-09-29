@@ -1,7 +1,7 @@
 /* global moment */
 /* global app */
 /* global factory */
-app.service('gameService', ['$http','socketFactory','configurationService','notificationService',function($http,socketFactory,configurationService,notificationService) {
+app.service('gameService', ['$http','socketFactory','configurationService','notificationService','playerService',function($http,socketFactory,configurationService,notificationService,playerService) {
 	
 	var self = this;
 	
@@ -31,8 +31,9 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	});
 	
 	//A song has been chosen
-	socketFactory.on("server:game:chosesong",function(data){;
-		notificationService.displayInformation(data.playerName +" chose the song" + data.songLink);
+	socketFactory.on("server:game:chosesong",function(data){
+		if(data.playerName !==playerService.playerInformations.playerName)
+			notificationService.displayInformation(data.playerName +" chose the song" + data.songLink);
 	});
 	
 	//When a player chose a song from the UI

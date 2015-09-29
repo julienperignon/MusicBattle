@@ -2,8 +2,8 @@
 /* global $ */
 
 /* PlayerController */
-angular.module('musicBattleApp').controller('GameController',['$scope','gameService',
-  function($scope,gameService){
+angular.module('musicBattleApp').controller('GameController',['$scope','$rootScope','gameService',
+  function($scope,$rootScope,gameService){
  
   //Scope properties
   $scope.player1 = null;
@@ -18,6 +18,10 @@ angular.module('musicBattleApp').controller('GameController',['$scope','gameServ
   $scope.chooseSong = function(){
     gameService.chooseSong($scope.songLink);
     console.log("link chosen : " + $scope.songLink);
+  }
+  
+  $scope.refreshRootScope = function(){
+    $rootScope.$apply();
   }
   
   //Scope watchs
@@ -53,7 +57,7 @@ angular.module('musicBattleApp').controller('GameController',['$scope','gameServ
   );
   $scope.$watch(function(scope) { return gameService.mustChooseSong },
     function(newValue) {
-      $scope.mustChooseSong = newValue;
+      console.log("watch mustChooseSong");
     }
   );
 }]);

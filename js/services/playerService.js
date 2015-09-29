@@ -48,8 +48,12 @@ app.service('playerService', ['$http','socketFactory','notificationService','con
     socketFactory.on('server:player:new',function(data){
         if(data.playerName!= self.playerInformations.name)
             notificationService.displayInformation(data.playerName + " joined the party !");
-        if(self.players.indexOf(data.playerName) > -1)
+        
+        console.log(self.players)
+        debugger;
+        if(self.players.indexOf(data.playerName) == -1)
         {
+            console.log("pushed player");
             self.players.push(data.playerName);    
         }
         

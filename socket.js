@@ -24,19 +24,19 @@ server.listen(port, function () {
 
 var self = this;
 //Game informations
-var playerNames = [];
-var player1 = null;
-var player2 = null;
-var player1ChoseSong = false;
-var player2ChoseSong = false;
-var choosingSongs = false;
-var playing = false;
-var numberOfPlayers = 0;;
-var sockets= [];
+self.playerNames = [];
+self.player1 = null;
+self.player2 = null;
+self.player1ChoseSong = false;
+self.player2ChoseSong = false;
+self.choosingSongs = false;
+self.playing = false;
+self.numberOfPlayers = 0;;
+self.sockets= [];
 
 //API Routes
 app.get('/players', function (req, res) {
-    res.send(JSON.stringify(playerNames));
+    res.send(JSON.stringify(self.playerNames));
 });
 
 app.get('/status', function (req, res) {
@@ -53,10 +53,10 @@ io.on('connection', function (socket) {
         // we store the playerName in the socket session for this client
         socket.playerName = playerName;
         // add the playerList to the global list
-        playerNames.push(playerName);
-        ++numberOfPlayers;
+        self.playerNames.push(playerName);
+        ++self.numberOfPlayers;
         addedUser = true;
-        sockets[playerName] = socket;    
+        self.sockets[playerName] = socket;    
         //We update the status, maybe we are more than 2 and can play :D 
         updateGameStatus();
         
@@ -78,11 +78,16 @@ io.on('connection', function (socket) {
         //A user chose a song
         socket.on('client:game:chosesong', function (data) {
             console.log("client:game:chosesong" + socket.playerName + ":" + data);
-            
-            if(socket.playerName === player1)
+            if(socket.playerName === self.player1){
+                console.log("setting player1 chooseSong flag to true");
                 self.player1ChoseSong = true;
-            else if(socket.playerName === player2)
+            }
+                
+            else if(socket.playerName === self.player2)
+            {
+                console.log("setting player2 chooseSong flag to true");
                 self.player2ChoseSong = true;
+            }  
                 
             io.emit('server:game:chosesong', {
                 playerName: socket.playerName,
@@ -98,10 +103,10 @@ io.on('connection', function (socket) {
             console.log("player left : " + socket.playerName);
             if (addedUser) {
                 console.log("deleting from players")
-                 var index = playerNames.indexOf(socket.playerName);
+                 var index = self.playerNames.indexOf(socket.playerName);
                 if(index > -1){
-                    playerNames.splice(index,1);
-                    --numberOfPlayers;
+                    self.playerNames.splice(index,1);
+                    --self.numberOfPlayers;
                 }
                 
                 
@@ -111,7 +116,7 @@ io.on('connection', function (socket) {
                 // echo globally that this client has left
                 socket.broadcast.emit('server:player:left', {
                     playerName: socket.playerName,
-                    numUsers: numberOfPlayers
+                    numUsers: self.numberOfPlayers
                 });
             }
         });
@@ -123,12 +128,12 @@ io.on('connection', function (socket) {
 //picks up 2 random players in every player connected
 function getTwoRandomPlayers(){
     
-    var randomIndex = Math.floor(Math.random()*playerNames.length);
-    var player1 = playerNames[randomIndex];
+    var randomIndex = Math.floor(Math.random()*self.playerNames.length);
+    var player1 = self.playerNames[randomIndex];
     var player2 = null;
     
     do{
-        player2 = playerNames[Math.floor(Math.random()*playerNames.length)];
+        player2 = self.playerNames[Math.floor(Math.random()*self.playerNames.length)];
     }
     while(player1 === player2)
     
@@ -141,9 +146,9 @@ function getTwoRandomPlayers(){
 
 //Update the game status and emits a message
 function updateGameStatus(){
-             
-    var indexPlayer1 = playerNames.indexOf(player1);
-    var indexPlayer2 = playerNames.indexOf(player2);
+    console.log("updating status");
+    var indexPlayer1 = self.playerNames.indexOf(self.player1);
+    var indexPlayer2 = self.playerNames.indexOf(self.player2);
     
     //One of the the player is not here anymore
     if(indexPlayer1 <= -1 || indexPlayer2 <= -1){
@@ -153,13 +158,16 @@ function updateGameStatus(){
     }
     
     //We can only start playing if we are 3 or more
-    self.canPlay = playerNames.length >= 3;
+    self.canPlay = self.playerNames.length >= 3;
     
     //We are playing if the the two player chose their respective song
-    self.playing = self.player1ChoseSong & self.player2ChoseSong;
+    self.playing = self.player1ChoseSong && self.player2ChoseSong;
+    
+    if(self.player1ChoseSong && self.player2ChoseSong)
+        self.choosingSongs = false;
     
     //We can play and we are not playing already, let's start a new game!
-    if(self.canPlay && !self.playing)
+    if(self.canPlay && !self.playing && !self.choosingSongs)
     {
         //First get two players randomly
         var chosenOnes = getTwoRandomPlayers();
@@ -172,12 +180,13 @@ function updateGameStatus(){
         console.log("Player2:" +  self.player2);
   
         //Emit the chosen player that they are the lucky ones !
-        io.to(sockets[self.player1].id).emit('server:game:choosesong',{position:1});
-        io.to(sockets[self.player2].id).emit('server:game:choosesong',{position:2});
+        io.to(self.sockets[self.player1].id).emit('server:game:choosesong',{position:1});
+        io.to(self.sockets[self.player2].id).emit('server:game:choosesong',{position:2});
                     
                     
     }
-    else{
+    else if(!self.canPlay && !self.playing){
+        console.log("SETTING CHOOSING SONGS TO FALSE")
         self.choosingSongs = false;
     }
     
