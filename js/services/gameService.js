@@ -64,7 +64,6 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 		self.player2 = data['player2'];
 		self.player1Song = data['player1Song'];
 		self.player2Song = data['player2Song'];
-	}
-	
+	}	
 
 }]);

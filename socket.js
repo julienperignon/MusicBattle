@@ -171,11 +171,17 @@ function updateGameStatus(){
     //We are playing if the the two player chose their respective song
     self.playing = self.player1ChoseSong && self.player2ChoseSong;
     
-    self.choosingSongs = !(self.player1ChoseSong && self.player2ChoseSong);
+     if(self.player1ChoseSong && self.player2ChoseSong)
+        self.choosingSongs = false
+    
+    console.log("self.canPlay:" + self.canPlay);
+    console.log("!self.playing:" + !self.playing);
+    console.log("!self.choosingSongs:" + !self.choosingSongs);
     
     //We can play and we are not playing already, let's start a new game!
     if(self.canPlay && !self.playing && !self.choosingSongs)
     {
+        
         //First get two players randomly
         var chosenOnes = getTwoRandomPlayers();
         self.player1 = chosenOnes.player1;

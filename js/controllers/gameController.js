@@ -2,8 +2,8 @@
 /* global $ */
 
 /* PlayerController */
-angular.module('musicBattleApp').controller('GameController',['$scope','$rootScope','gameService',
-  function($scope,$rootScope,gameService){
+angular.module('musicBattleApp').controller('GameController',['$scope','$rootScope','$sce','gameService','youtubeService',
+  function($scope,$rootScope,$sce,gameService,youtubeService){
  
   //Scope properties
   $scope.player1 = null;
@@ -65,12 +65,12 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   );
   $scope.$watch(function(scope) { return gameService.player1Song },
     function(newValue) {
-      $scope.player1Song = newValue;
+      $scope.player1Song = $sce.trustAsResourceUrl(youtubeService.getEmbedVideoUrlFromNormalUrl(newValue));
     }
   );
   $scope.$watch(function(scope) { return gameService.player2Song },
     function(newValue) {
-      $scope.player2Song = newValue;
+      $scope.player2Song = $sce.trustAsResourceUrl(youtubeService.getEmbedVideoUrlFromNormalUrl(newValue));
     }
   );
 }]);
