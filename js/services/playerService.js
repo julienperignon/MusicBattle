@@ -50,7 +50,6 @@ app.service('playerService', ['$http','socketFactory','notificationService','con
             notificationService.displayInformation(data.playerName + " joined the party !");
         
         console.log(self.players)
-        debugger;
         if(self.players.indexOf(data.playerName) == -1)
         {
             console.log("pushed player");

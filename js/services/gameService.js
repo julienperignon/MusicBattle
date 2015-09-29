@@ -11,6 +11,8 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	this.playing = null
 	this.player1 = null;
 	this.player2 = null;
+	this.player1Song = null;
+	this.player2Song = null;
 	this.mustChooseSong = false;
 	this.position = null;
 	this.playing = null;
@@ -60,6 +62,8 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 		self.playing = data['playing'];
 		self.player1 = data['player1'];
 		self.player2 = data['player2'];
+		self.player1Song = data['player1Song'];
+		self.player2Song = data['player2Song'];
 	}
 	
 

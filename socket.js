@@ -29,6 +29,8 @@ self.player1 = null;
 self.player2 = null;
 self.player1ChoseSong = false;
 self.player2ChoseSong = false;
+self.player1Song = null;
+self.player2Song = null;
 self.choosingSongs = false;
 self.playing = false;
 self.numberOfPlayers = 0;;
@@ -81,12 +83,14 @@ io.on('connection', function (socket) {
             if(socket.playerName === self.player1){
                 console.log("setting player1 chooseSong flag to true");
                 self.player1ChoseSong = true;
+                self.player1Song = data;
             }
                 
             else if(socket.playerName === self.player2)
             {
                 console.log("setting player2 chooseSong flag to true");
                 self.player2ChoseSong = true;
+                self.player2Song = data;
             }  
                 
             io.emit('server:game:chosesong', {
@@ -150,11 +154,15 @@ function updateGameStatus(){
     var indexPlayer1 = self.playerNames.indexOf(self.player1);
     var indexPlayer2 = self.playerNames.indexOf(self.player2);
     
-    //One of the the player is not here anymore
+    //One of the the player is not here anymore, reset da game !
     if(indexPlayer1 <= -1 || indexPlayer2 <= -1){
         self.player1 = null;
-        self.player2=null;
-        self.playing=false;
+        self.player2 = null;
+        self.playing = false;
+        self.player1ChoseSong = false;
+        self.player2ChoseSong = false;
+        self.player1Song = null;
+        self.player2Song = null;
     }
     
     //We can only start playing if we are 3 or more
@@ -163,8 +171,7 @@ function updateGameStatus(){
     //We are playing if the the two player chose their respective song
     self.playing = self.player1ChoseSong && self.player2ChoseSong;
     
-    if(self.player1ChoseSong && self.player2ChoseSong)
-        self.choosingSongs = false;
+    self.choosingSongs = !(self.player1ChoseSong && self.player2ChoseSong);
     
     //We can play and we are not playing already, let's start a new game!
     if(self.canPlay && !self.playing && !self.choosingSongs)
@@ -201,6 +208,8 @@ function getGameStatus(){
         choosingSongs : self.choosingSongs,
         player1 : self.player1,
         player2 : self.player2,
-        playing : self.playing
+        playing : self.playing,
+        player1Song : self.player1Song,
+        player2Song : self.player2Song
     };
 }

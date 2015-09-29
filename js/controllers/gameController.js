@@ -13,10 +13,13 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   $scope.choosingSongs = null;
   $scope.mustChooseSong =false;
   $scope.songLink = null;
+  $scope.player1Song = null;
+  $scope.player2Song = null;
   
   //Scope functions
   $scope.chooseSong = function(){
     gameService.chooseSong($scope.songLink);
+    $scope.mustChooseSong = false;
     console.log("link chosen : " + $scope.songLink);
   }
   
@@ -57,7 +60,17 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   );
   $scope.$watch(function(scope) { return gameService.mustChooseSong },
     function(newValue) {
-      console.log("watch mustChooseSong");
+      $scope.mustChooseSong = newValue;
+    }
+  );
+  $scope.$watch(function(scope) { return gameService.player1Song },
+    function(newValue) {
+      $scope.player1Song = newValue;
+    }
+  );
+  $scope.$watch(function(scope) { return gameService.player2Song },
+    function(newValue) {
+      $scope.player2Song = newValue;
     }
   );
 }]);

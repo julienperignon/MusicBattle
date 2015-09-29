@@ -10,7 +10,7 @@ app.service('chatService', ['$rootScope','socketFactory',function($rootScope,soc
 		console.log(data);
 		self.messages.push({date : moment().format('HH:mm:ss'), playerName : data.playerName, message : data.message});
 		//force refresh
-		$rootScope.$apply();
+		//$rootScope.$apply();
 	});
 	
 	this.sendMessage = function(message){
