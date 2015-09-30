@@ -25,6 +25,8 @@ server.listen(port, function () {
 var self = this;
 //Game informations
 self.playerNames = [];
+self.playersWhoVotedForSong1 = [];
+self.playersWhoVotedForSong2 = [];
 self.player1 = null;
 self.player2 = null;
 self.player1ChoseSong = false;
@@ -100,8 +102,24 @@ io.on('connection', function (socket) {
             
             updateGameStatus();
         });
-
-        //User disconnected
+        
+        //A user voted for a song
+        socket.on('client:game:votesong', function (data) {
+            if(data == 1)
+                self.playersWhoVotedForSong1.push(socket.playerName);
+            else if(data == 2)
+                self.playersWhoVotedForSong2.push(socket.playerName);
+            
+            //Notify the client that someone has voted
+            io.emit('server:game:votesong', {
+                playerName: socket.playerName,
+                songNumber: data
+            });
+            
+            updateGameStatus();     
+        });
+        
+        //User disconnected 
         socket.on('disconnect', function () {
             // remove the playername from global playernames list
             console.log("player left : " + socket.playerName);
@@ -156,13 +174,15 @@ function updateGameStatus(){
     
     //One of the the player is not here anymore, reset da game !
     if(indexPlayer1 <= -1 || indexPlayer2 <= -1){
-        self.player1 = null;
-        self.player2 = null;
-        self.playing = false;
-        self.player1ChoseSong = false;
-        self.player2ChoseSong = false;
-        self.player1Song = null;
-        self.player2Song = null;
+        resetGameStatus();
+    }
+    
+    //Do eveery player has voted already (except the two already playing)
+    if(self.playerNames.length == 
+        ((self.playersWhoVotedForSong1.length + self.playersWhoVotedForSong2.length)-2)){
+            
+       //TODO Display Who won or if it's a draw 
+        resetGameStatus();
     }
     
     //We can only start playing if we are 3 or more
@@ -171,6 +191,7 @@ function updateGameStatus(){
     //We are playing if the the two player chose their respective song
     self.playing = self.player1ChoseSong && self.player2ChoseSong;
     
+    //If the two player chose their song,then we are not choosing songs anymore
      if(self.player1ChoseSong && self.player2ChoseSong)
         self.choosingSongs = false
     
@@ -206,6 +227,18 @@ function updateGameStatus(){
     //Emit to client the updated game status
     io.emit('server:game:status',getGameStatus());  
     
+}
+
+function resetGameStatus(){
+    self.player1 = null;
+    self.player2 = null;
+    self.playing = false;
+    self.player1ChoseSong = false;
+    self.player2ChoseSong = false;
+    self.player1Song = null;
+    self.player2Song = null;
+    self.playersWhoVotedForSong1 = [];
+    self.playersWhoVotedForSong2 = [];
 }
 
 function getGameStatus(){

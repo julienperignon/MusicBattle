@@ -38,7 +38,7 @@
 			CanPlay? : {{canPlay}}<br />
 			Playing? : {{playing}}<br />
 			ChoosingSongs? : {{choosingSongs}}<br />
-			<input type="button" ng-click="refreshRootScope" value="refresh" />
+			<!--<input type="button" ng-click="refreshRootScope" value="refresh" />-->
 		</div>
 		
 		<div ng-controller="PlayerController">
@@ -89,12 +89,17 @@
 				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="songLink" ng-model="songLink" />
 			</form>
 		</div>
-		 <div style="display-inline" ng-controller="GameController" ng-show="playing">
-			 <div style="display:inline;width:40%;background-color:red" id="video1">
-				 <iframe width="560" height="315" src="{{playing && player1Song}}" frameborder="0" allowfullscreen></iframe>
-			</div>
-			<div style="display:inline;width:40%;background-color:blue" id="video2">
-				<iframe width="560" height="315" src="{{playing && player2Song}}" frameborder="0" allowfullscreen></iframe>
+		
+		<div style="display-inline" ng-controller="PlayerController" ng-show="isLoggedIn">
+			<div style="display-inline" ng-controller="GameController" ng-show="playing">
+				<div style="display:inline;width:40%" id="video1">
+					<iframe width="560" height="315" ng-src="{{playing && player1Song}}" frameborder="0" allowfullscreen></iframe>
+					<input type="button" ng-show="playing && !hasVoted && canVote" ng-click="voteForVideo(1)" value="Vote for this video" />		
+				</div>
+				<div style="display:inline;width:40%" id="video2">
+					<iframe width="560" height="315" ng-src="{{playing && player2Song}}" frameborder="0" allowfullscreen></iframe>
+					<input type="button" ng-show="playing && !hasVoted && canVote" ng-click="voteForVideo(2)" value="Vote for this video" />		
+				</div>
 			</div>
 		</div>
 		

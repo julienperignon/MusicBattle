@@ -16,6 +16,7 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	this.mustChooseSong = false;
 	this.position = null;
 	this.playing = null;
+	this.canVote = true;
 	
 	getGameStatus();
 	
@@ -27,6 +28,7 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	//We are told to choose a song ! Do so :)
 	socketFactory.on("server:game:choosesong",function(data){
 		self.mustChooseSong = true;
+		self.canVote = false;
 		//Am i first or second player ?
 		self.position = data.position;
 		notificationService.displayInformation("You have been chosen to play as player " + data.position + " !");
@@ -35,12 +37,22 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	//A song has been chosen
 	socketFactory.on("server:game:chosesong",function(data){
 		if(data.playerName !==playerService.playerInformations.playerName)
-			notificationService.displayInformation(data.playerName +" chose the song" + data.songLink);
+			notificationService.displayInformation(data.playerName +" chose the song " + data.songLink);
+	});
+	
+	//A song has been voted for
+	socketFactory.on("server:game:votesong",function(data){
+		if(data.playerName !==playerService.playerInformations.playerName)
+			notificationService.displayInformation(data.playerName +" vote for the song number " + data.songNumber);
 	});
 	
 	//When a player chose a song from the UI
 	this.chooseSong = function(songLink){
 		socketFactory.emit("client:game:chosesong",songLink);	
+	}
+	
+	this.voteForVideo = function(videoNumber){
+		socketFactory.emit("client:game:votesong",videoNumber);
 	}
 	
 	//Get the game status server side

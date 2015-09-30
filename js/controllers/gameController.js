@@ -15,6 +15,8 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   $scope.songLink = null;
   $scope.player1Song = null;
   $scope.player2Song = null;
+  $scope.hasVoted = false;
+  $scope.canVote = true;
   
   //Scope functions
   $scope.chooseSong = function(){
@@ -22,6 +24,11 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
     $scope.mustChooseSong = false;
     console.log("link chosen : " + $scope.songLink);
   }
+  
+   $scope.voteForVideo = function(videoNumber){
+     gameService.voteForVideo(videoNumber);
+     $scope.hasVoted = true;
+   }
   
   $scope.refreshRootScope = function(){
     $rootScope.$apply();
@@ -71,6 +78,11 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   $scope.$watch(function(scope) { return gameService.player2Song },
     function(newValue) {
       $scope.player2Song = $sce.trustAsResourceUrl(youtubeService.getEmbedVideoUrlFromNormalUrl(newValue));
+    }
+  );
+   $scope.$watch(function(scope) { return gameService.canVote },
+    function(newValue) {
+      $scope.canVote = newValue;
     }
   );
 }]);
