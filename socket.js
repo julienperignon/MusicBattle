@@ -75,7 +75,7 @@ io.on('connection', function (socket) {
 
             io.emit('server:message:new', {
                 playerName: socket.playerName,
-                songLink: data
+                message: data
             });
         });
         
