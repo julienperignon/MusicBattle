@@ -168,6 +168,7 @@ function getTwoRandomPlayers(){
 
 //Update the game status and emits a message
 function updateGameStatus(){
+    
     console.log("updating status");
     var indexPlayer1 = self.playerNames.indexOf(self.player1);
     var indexPlayer2 = self.playerNames.indexOf(self.player2);
@@ -178,11 +179,35 @@ function updateGameStatus(){
     }
     
     //Do eveery player has voted already (except the two already playing)
-    if(self.playerNames.length == 
-        ((self.playersWhoVotedForSong1.length + self.playersWhoVotedForSong2.length)-2)){
-            
+    if(self.playerNames.length >=3 && (self.playerNames.length -2) == 
+        (self.playersWhoVotedForSong1.length + self.playersWhoVotedForSong2.length)){
+        console.log("EVERYONE VOTED");
        //TODO Display Who won or if it's a draw 
+       
+       if(self.playersWhoVotedForSong1.length === self.playersWhoVotedForSong2.length){
+           //DRAW
+           io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'DRAW'});
+           io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'DRAW'});
+           io.emit('server:game:result',{winner:'DRAW'});
+           
+       }
+       //Player 1 won
+       else if(self.playersWhoVotedForSong1.length > self.playersWhoVotedForSong2.length){
+           io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'WIN'});
+           io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'LOSS'});
+           io.emit('server:game:result',{winner: self.player1});
+       }
+       //Player 2 won
+       else if(self.playersWhoVotedForSong1.length > self.playersWhoVotedForSong2.length){
+            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'LOSS'});
+           io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'WIN'});
+           io.emit('server:game:result',{winner: self.player2});
+       }
+       
+       //TODO ADD Tempo with io message
         resetGameStatus();
+        updateGameStatus();
+        return;
     }
     
     //We can only start playing if we are 3 or more
@@ -192,17 +217,20 @@ function updateGameStatus(){
     self.playing = self.player1ChoseSong && self.player2ChoseSong;
     
     //If the two player chose their song,then we are not choosing songs anymore
-     if(self.player1ChoseSong && self.player2ChoseSong)
-        self.choosingSongs = false
+     if(self.player1ChoseSong && self.player2ChoseSong) {
+        console.log('TAMERE');
+        self.choosingSongs = false 
+     }
+        
     
-    console.log("self.canPlay:" + self.canPlay);
-    console.log("!self.playing:" + !self.playing);
-    console.log("!self.choosingSongs:" + !self.choosingSongs);
+    // console.log("self.canPlay:" + self.canPlay);
+    // console.log("!self.playing:" + !self.playing);
+    // console.log("!self.choosingSongs:" + !self.choosingSongs);
     
     //We can play and we are not playing already, let's start a new game!
     if(self.canPlay && !self.playing && !self.choosingSongs)
     {
-        
+        console.log("LETZ PLAY BITCHIZ");
         //First get two players randomly
         var chosenOnes = getTwoRandomPlayers();
         self.player1 = chosenOnes.player1;
@@ -230,6 +258,7 @@ function updateGameStatus(){
 }
 
 function resetGameStatus(){
+    console.log("RESETTING GAME STATUS")
     self.player1 = null;
     self.player2 = null;
     self.playing = false;
@@ -239,6 +268,7 @@ function resetGameStatus(){
     self.player2Song = null;
     self.playersWhoVotedForSong1 = [];
     self.playersWhoVotedForSong2 = [];
+    self.choosingSongs = false;
 }
 
 function getGameStatus(){

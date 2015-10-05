@@ -38,6 +38,7 @@
 			CanPlay? : {{canPlay}}<br />
 			Playing? : {{playing}}<br />
 			ChoosingSongs? : {{choosingSongs}}<br />
+			mustChooseSong : {{mustChooseSong}}<br />
 			<!--<input type="button" ng-click="refreshRootScope" value="refresh" />-->
 		</div>
 		
@@ -84,6 +85,7 @@
 		
 		<!-- Song selection -->
 		<div ng-controller="GameController" ng-show="mustChooseSong" >
+			mustChooseSong : {{mustChooseSong}}<br />
 			<form  name="songForm" ng-submit="chooseSong()">	
 				You must choose a song (requires youtube link): <br />
 				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="songLink" ng-model="songLink" />

@@ -27,6 +27,7 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	
 	//We are told to choose a song ! Do so :)
 	socketFactory.on("server:game:choosesong",function(data){
+		console.log("i must choose a song");
 		self.mustChooseSong = true;
 		self.canVote = false;
 		//Am i first or second player ?
@@ -45,10 +46,27 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 		if(data.playerName !==playerService.playerInformations.playerName)
 			notificationService.displayInformation(data.playerName +" vote for the song number " + data.songNumber);
 	});
+
+	//The player received his result, is it a win or a loss ?
+	socketFactory.on("server:game:ownresult",function(data){
+		if(data.result === 'WIN')
+			notificationService.displayInformation('You won the round ! Keep it up ! :)');
+		else if(data.result === 'LOSS'){
+			notificationService.displayInformation('You lost the round :( Maybe next round ? :)');
+		}
+	});
+	
+	//the player received the result of the current round
+	socketFactory.on("server:game:result",function(data){
+		self.mustChooseSong = false;
+		notificationService.displayInformation(data.winner + ' won the round ! Next round coming soon !');
+	});
 	
 	//When a player chose a song from the UI
 	this.chooseSong = function(songLink){
-		socketFactory.emit("client:game:chosesong",songLink);	
+		socketFactory.emit("client:game:chosesong",songLink,function(){
+				self.mustChooseSong = false;	
+		});	
 	}
 	
 	this.voteForVideo = function(videoNumber){

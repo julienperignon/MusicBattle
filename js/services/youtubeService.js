@@ -7,6 +7,8 @@ app.service('youtubeService',[function() {
 		if(url == undefined)
 			return '';
 		var video_id = url.split('v=')[1];
+		if(video_id == undefined)
+		return '';
 		var ampersandPosition = video_id.indexOf('&');
 		if(ampersandPosition != -1) {
 			video_id = video_id.substring(0, ampersandPosition);

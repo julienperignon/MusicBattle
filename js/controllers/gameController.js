@@ -21,8 +21,9 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   //Scope functions
   $scope.chooseSong = function(){
     gameService.chooseSong($scope.songLink);
-    $scope.mustChooseSong = false;
+    //$scope.mustChooseSong = false;
     console.log("link chosen : " + $scope.songLink);
+    $scope.songLink = null;
   }
   
    $scope.voteForVideo = function(videoNumber){
@@ -67,6 +68,7 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   );
   $scope.$watch(function(scope) { return gameService.mustChooseSong },
     function(newValue) {
+      console.log("watch must choosee song");
       $scope.mustChooseSong = newValue;
     }
   );
