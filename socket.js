@@ -94,7 +94,9 @@ io.on('connection', function (socket) {
                 self.player2ChoseSong = true;
                 self.player2Song = data;
             }  
-                
+            //Acknowledge the player we received his song link
+            console.log("SOCKET ID : " + socket.id);
+            io.to(socket.id).emit('server:game:acksong');  
             io.emit('server:game:chosesong', {
                 playerName: socket.playerName,
                 songLink: data
@@ -184,8 +186,8 @@ function updateGameStatus(){
         console.log("EVERYONE VOTED");
        //TODO Display Who won or if it's a draw 
        
+       //DRAW
        if(self.playersWhoVotedForSong1.length === self.playersWhoVotedForSong2.length){
-           //DRAW
            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'DRAW'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'DRAW'});
            io.emit('server:game:result',{winner:'DRAW'});
@@ -199,7 +201,7 @@ function updateGameStatus(){
        }
        //Player 2 won
        else if(self.playersWhoVotedForSong1.length > self.playersWhoVotedForSong2.length){
-            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'LOSS'});
+           io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'LOSS'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'WIN'});
            io.emit('server:game:result',{winner: self.player2});
        }
@@ -218,7 +220,6 @@ function updateGameStatus(){
     
     //If the two player chose their song,then we are not choosing songs anymore
      if(self.player1ChoseSong && self.player2ChoseSong) {
-        console.log('TAMERE');
         self.choosingSongs = false 
      }
         
