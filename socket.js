@@ -39,12 +39,21 @@ self.numberOfPlayers = 0;;
 self.sockets= [];
 
 //API Routes
+
+//Gets the list of connected players
 app.get('/players', function (req, res) {
     res.send(JSON.stringify(self.playerNames));
 });
 
+//Get current status of the game
 app.get('/status', function (req, res) {
     res.send(getGameStatus());
+});
+
+
+//Get the scores 
+app.get('/scores', function (req, res) {
+    res.send(JSON.stringify(getScores()));
 });
 
 
@@ -54,13 +63,21 @@ io.on('connection', function (socket) {
 
     socket.on('client:player:new', function (playerName) {
         console.log("client:player:new:" + playerName);
+        addedUser = true;
+        
         // we store the playerName in the socket session for this client
         socket.playerName = playerName;
+        
+        //set the score to 0
+        socket.score = 0;
+        
         // add the playerList to the global list
         self.playerNames.push(playerName);
         ++self.numberOfPlayers;
-        addedUser = true;
-        self.sockets[playerName] = socket;    
+        
+        //Store the socket
+        self.sockets[playerName] = socket;
+        
         //We update the status, maybe we are more than 2 and can play :D 
         updateGameStatus();
         
@@ -184,7 +201,7 @@ function updateGameStatus(){
     if(self.playerNames.length >=3 && (self.playerNames.length -2) == 
         (self.playersWhoVotedForSong1.length + self.playersWhoVotedForSong2.length)){
         console.log("EVERYONE VOTED");
-       //TODO Display Who won or if it's a draw 
+       
        
        //DRAW
        if(self.playersWhoVotedForSong1.length === self.playersWhoVotedForSong2.length){
@@ -195,12 +212,16 @@ function updateGameStatus(){
        }
        //Player 1 won
        else if(self.playersWhoVotedForSong1.length > self.playersWhoVotedForSong2.length){
+           // Add a won round to the score of the player who won
+           self.sockets[self.player1].score++;
            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'WIN'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'LOSS'});
            io.emit('server:game:result',{winner: self.player1});
        }
        //Player 2 won
        else if(self.playersWhoVotedForSong1.length > self.playersWhoVotedForSong2.length){
+           // Add a won round to the score of the player who won
+           self.sockets[self.player2].score++;
            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'LOSS'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'WIN'});
            io.emit('server:game:result',{winner: self.player2});
@@ -258,6 +279,7 @@ function updateGameStatus(){
     
 }
 
+//Resets the game to start a new round
 function resetGameStatus(){
     console.log("RESETTING GAME STATUS")
     self.player1 = null;
@@ -272,6 +294,7 @@ function resetGameStatus(){
     self.choosingSongs = false;
 }
 
+//Get's the current status of the game (either pushed via the websocket status message , or retrieved via get request)
 function getGameStatus(){
    return  {
         canPlay : self.canPlay,
@@ -280,6 +303,17 @@ function getGameStatus(){
         player2 : self.player2,
         playing : self.playing,
         player1Song : self.player1Song,
-        player2Song : self.player2Song
+        player2Song : self.player2Song,
+        scores : JSON.stringify(getScores())
     };
+}
+
+//Get's the score (either pushed via the websocket status message , or retrieved via get request)
+function getScores(){
+    var scores = [];
+    for(var s in self.sockets){
+        console.log(s);
+        scores.push({playerName: s, score : self.sockets[s].score});
+    }
+    return scores;
 }
