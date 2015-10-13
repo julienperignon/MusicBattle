@@ -18,6 +18,9 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	this.playing = null;
 	this.canVote = true;
 	this.hasVoted = false;
+	this.playersWhoVotedForSong1 = [];
+	this.playersWhoVotedForSong2 = [];
+	this.theme = null;
 	
 	getGameStatus();
 	
@@ -105,6 +108,9 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 		self.player2 = data['player2'];
 		self.player1Song = data['player1Song'];
 		self.player2Song = data['player2Song'];
+		self.playersWhoVotedForSong1 = data['playersWhoVotedForSong1'];
+		self.playersWhoVotedForSong2 = data['playersWhoVotedForSong2'];
+		self.theme = data['theme'];
 	}	
 
 }]);

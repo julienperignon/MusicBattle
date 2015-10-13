@@ -17,6 +17,9 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   $scope.player2Song = null;
   $scope.hasVoted = false;
   $scope.canVote = true;
+  $scope.playersWhoVotedForSong1 = [];
+  $scope.playersWhoVotedForSong2 = [];
+  $scope.theme = null;
   
   //Scope functions
   $scope.chooseSong = function(){
@@ -90,6 +93,24 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   $scope.$watch(function(scope) { return gameService.hasVoted },
     function(newValue) {
       $scope.hasVoted = newValue;
+    }
+  );
+  
+   $scope.$watch(function(scope) { return gameService.playersWhoVotedForSong1 },
+    function(newValue) {
+      $scope.playersWhoVotedForSong1 = newValue;
+    }
+  );
+  
+   $scope.$watch(function(scope) { return gameService.playersWhoVotedForSong2 },
+    function(newValue) {
+      $scope.playersWhoVotedForSong2 = newValue;
+    }
+  );
+  
+  $scope.$watch(function(scope) { return gameService.theme },
+    function(newValue) {
+      $scope.theme = newValue;
     }
   );
 }]);

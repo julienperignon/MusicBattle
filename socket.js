@@ -23,6 +23,10 @@ server.listen(port, function () {
 });
 
 var self = this;
+
+//Themes
+self.themes = ['80\'s', '90\'s',' Pop', 'Rock', 'Kid movies','Movies','Fun']
+
 //Game informations
 self.playerNames = [];
 self.playersWhoVotedForSong1 = [];
@@ -38,7 +42,8 @@ self.playing = false;
 self.numberOfPlayers = 0;;
 self.sockets= [];
 self.scores =[];
-
+self.playerNamesCurrentlyPlaying = [];
+self.theme = null;
 //API Routes
 
 //Gets the list of connected players
@@ -200,7 +205,7 @@ function updateGameStatus(){
     }
     
     //Do eveery player has voted already (except the two already playing)
-    if(self.playerNames.length >=3 && (self.playerNames.length -2) == 
+    if(self.playerNames.length >=3 && (self.playerNamesCurrentlyPlaying.length -2) == 
         (self.playersWhoVotedForSong1.length + self.playersWhoVotedForSong2.length)){
         console.log("EVERYONE VOTED");
        
@@ -256,10 +261,19 @@ function updateGameStatus(){
     if(self.canPlay && !self.playing && !self.choosingSongs)
     {
         console.log("LETZ PLAY BITCHIZ");
+        
+        //Copy array of players so if a new player connects during round he wont be considered playing for the current round
+        self.playerNamesCurrentlyPlaying = self.playerNames;
+        
         //First get two players randomly
         var chosenOnes = getTwoRandomPlayers();
+        
         self.player1 = chosenOnes.player1;
         self.player2 = chosenOnes.player2;
+        
+        //Get the theme
+        self.theme = getRandomTheme();
+        
         //change the current status of the game to tell players the battle has begun
         self.choosingSongs = true;
         
@@ -267,8 +281,8 @@ function updateGameStatus(){
         console.log("Player2:" +  self.player2);
   
         //Emit the chosen player that they are the lucky ones !
-        io.to(self.sockets[self.player1].id).emit('server:game:choosesong',{position:1});
-        io.to(self.sockets[self.player2].id).emit('server:game:choosesong',{position:2});
+        io.to(self.sockets[self.player1].id).emit('server:game:choosesong',{position:1, theme : self.theme});
+        io.to(self.sockets[self.player2].id).emit('server:game:choosesong',{position:2, theme : self.theme});
                     
                     
     }
@@ -295,6 +309,8 @@ function resetGameStatus(){
     self.playersWhoVotedForSong1 = [];
     self.playersWhoVotedForSong2 = [];
     self.choosingSongs = false;
+    self.playerNamesCurrentlyPlaying=[];
+    self.theme = null;
 }
 
 //Get's the current status of the game (either pushed via the websocket status message , or retrieved via get request)
@@ -307,7 +323,10 @@ function getGameStatus(){
         playing : self.playing,
         player1Song : self.player1Song,
         player2Song : self.player2Song,
-        scores : JSON.stringify(getScores())
+        playersWhoVotedForSong1 : self.playersWhoVotedForSong1,
+        playersWhoVotedForSong2 : self.playersWhoVotedForSong2,
+        scores : getScores(),
+        theme : self.theme
     };
 }
 
@@ -315,9 +334,16 @@ function getGameStatus(){
 function getScores(){
     var tmpScores = [];
     for(var s in self.scores){
-        console.log(s);
-        console.log(self.scores[s]);
+        // console.log(s);
+        // console.log(self.scores[s]);
         tmpScores.push({playerName: s, score : self.scores[s]});
     }
     return tmpScores;
+}
+
+//Gets a random theme for the round
+function getRandomTheme(){
+    
+    var randomIndex = Math.floor(Math.random()*self.themes.length);
+    return self.themes[randomIndex];   
 }

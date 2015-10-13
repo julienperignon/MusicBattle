@@ -25,7 +25,6 @@
 		
 		<!-- Controllers -->
 		<script src="js/controllers/playerController.js"></script>
-		<script src="js/controllers/themeController.js"></script>
 		<script src="js/controllers/chatController.js"></script>
 		<script src="js/controllers/gameController.js"></script>
 		<script src="js/controllers/scoreController.js"></script>
@@ -77,32 +76,28 @@
 			
 		</div>
 		
-		
-		<!--Theme selection -->
-		<div ng-controller="ThemeController" ng-show="playing && mustSelectTheme" >
-			Pick a theme : 
-			<select ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes"></select>
-			<input type="button" ng-click="themeSelected()" value="Select theme" />		
-		</div>
-		
 		<!-- Song selection -->
 		<div ng-controller="GameController" ng-show="mustChooseSong" >
 			mustChooseSong : {{mustChooseSong}}<br />
 			<form  name="songForm" ng-submit="chooseSong()">	
 				You must choose a song (requires youtube link): <br />
+				The theme is : <b>{{theme}}</b>
 				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="songLink" ng-model="songLink" />
 			</form>
 		</div>
 		
 		<div style="display-inline" ng-controller="PlayerController" ng-show="isLoggedIn">
 			<div style="display-inline" ng-controller="GameController" ng-show="playing">
+				<h3>Theme : {{theme}}</h3>
 				<div style="display:inline;width:40%" id="video1">
+					<span style="display:block">Score : {{playersWhoVotedForSong1.length}}</span>
 					<iframe width="560" height="315" ng-src="{{playing && player1Song}}" frameborder="0" allowfullscreen></iframe>
-					<input type="button" ng-show="playing && !hasVoted && canVote" ng-click="voteForVideo(1)" value="Vote for this video" />		
+					<input type="button" ng-show="!hasVoted && canVote" ng-click="voteForVideo(1)" value="Vote for this video" />		
 				</div>
 				<div style="display:inline;width:40%" id="video2">
+					<span style="display:block">Score : {{playersWhoVotedForSong2.length}}</span>
 					<iframe width="560" height="315" ng-src="{{playing && player2Song}}" frameborder="0" allowfullscreen></iframe>
-					<input type="button" ng-show="playing && !hasVoted && canVote" ng-click="voteForVideo(2)" value="Vote for this video" />		
+					<input type="button" ng-show="!hasVoted && canVote" ng-click="voteForVideo(2)" value="Vote for this video" />		
 				</div>
 			</div>
 		</div>
