@@ -21,12 +21,14 @@
 		<script src="js/services/configurationService.js"></script>
 		<script src="js/services/gameService.js"></script>
 		<script src="js/services/youtubeService.js"></script>
+		<script src="js/services/scoreService.js"></script>
 		
 		<!-- Controllers -->
 		<script src="js/controllers/playerController.js"></script>
 		<script src="js/controllers/themeController.js"></script>
 		<script src="js/controllers/chatController.js"></script>
 		<script src="js/controllers/gameController.js"></script>
+		<script src="js/controllers/scoreController.js"></script>
 		
 	</head>	
 	<body>
@@ -103,6 +105,10 @@
 					<input type="button" ng-show="playing && !hasVoted && canVote" ng-click="voteForVideo(2)" value="Vote for this video" />		
 				</div>
 			</div>
+		</div>
+		<div ng-controller="ScoreController" >
+			<h3>Scores</h3>
+			<span style="display:block"  ng-repeat="(key, value) in scores"><b>({{value.playerName}})</b>:{{value.score}}</span>
 		</div>
 		
 	</body>

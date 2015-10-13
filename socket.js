@@ -37,6 +37,7 @@ self.choosingSongs = false;
 self.playing = false;
 self.numberOfPlayers = 0;;
 self.sockets= [];
+self.scores =[];
 
 //API Routes
 
@@ -69,7 +70,8 @@ io.on('connection', function (socket) {
         socket.playerName = playerName;
         
         //set the score to 0
-        socket.score = 0;
+        if(self.scores[playerName] == undefined)
+            self.scores[playerName] = 0;
         
         // add the playerList to the global list
         self.playerNames.push(playerName);
@@ -213,7 +215,8 @@ function updateGameStatus(){
        //Player 1 won
        else if(self.playersWhoVotedForSong1.length > self.playersWhoVotedForSong2.length){
            // Add a won round to the score of the player who won
-           self.sockets[self.player1].score++;
+           //self.sockets[self.player1].score++;
+           self.scores[self.player1] =  self.scores[self.player1] + 1;
            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'WIN'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'LOSS'});
            io.emit('server:game:result',{winner: self.player1});
@@ -221,7 +224,7 @@ function updateGameStatus(){
        //Player 2 won
        else if(self.playersWhoVotedForSong1.length > self.playersWhoVotedForSong2.length){
            // Add a won round to the score of the player who won
-           self.sockets[self.player2].score++;
+           self.scores[self.player2] =  self.scores[self.player2] + 1;
            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'LOSS'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'WIN'});
            io.emit('server:game:result',{winner: self.player2});
@@ -310,10 +313,11 @@ function getGameStatus(){
 
 //Get's the score (either pushed via the websocket status message , or retrieved via get request)
 function getScores(){
-    var scores = [];
-    for(var s in self.sockets){
+    var tmpScores = [];
+    for(var s in self.scores){
         console.log(s);
-        scores.push({playerName: s, score : self.sockets[s].score});
+        console.log(self.scores[s]);
+        tmpScores.push({playerName: s, score : self.scores[s]});
     }
-    return scores;
+    return tmpScores;
 }

@@ -28,7 +28,7 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   
    $scope.voteForVideo = function(videoNumber){
      gameService.voteForVideo(videoNumber);
-     $scope.hasVoted = true;
+     // $scope.hasVoted = true;
    }
   
   $scope.refreshRootScope = function(){
@@ -85,6 +85,11 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
    $scope.$watch(function(scope) { return gameService.canVote },
     function(newValue) {
       $scope.canVote = newValue;
+    }
+  );
+  $scope.$watch(function(scope) { return gameService.hasVoted },
+    function(newValue) {
+      $scope.hasVoted = newValue;
     }
   );
 }]);

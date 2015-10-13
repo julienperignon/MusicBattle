@@ -17,6 +17,7 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	this.position = null;
 	this.playing = null;
 	this.canVote = true;
+	this.hasVoted = false;
 	
 	getGameStatus();
 	
@@ -58,15 +59,15 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	
 	//the player received the result of the current round
 	socketFactory.on("server:game:result",function(data){
-		console.log("A");
 		self.mustChooseSong = false;
+		self.canVote = true;
+		self.hasVoted = false;
 		notificationService.displayInformation(data.winner + ' won the round ! Next round coming soon !');
 	});
 	
 	
 	//the player received information from the server that his song link has been received
 	socketFactory.on("server:game:acksong",function(data){
-		console.log("B");
 		self.mustChooseSong = false;
 	});
 	
@@ -74,12 +75,12 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 	//When a player chose a song from the UI
 	this.chooseSong = function(songLink){
 		socketFactory.emit("client:game:chosesong",songLink,function(){
-			console.log("C");
 			self.mustChooseSong = false;	
 		});	
 	}
 	
 	this.voteForVideo = function(videoNumber){
+		self.hasVoted = true;
 		socketFactory.emit("client:game:votesong",videoNumber);
 	}
 	
