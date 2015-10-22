@@ -3,6 +3,9 @@
 /* global app */
 /* global factory */
 app.service('youtubeService',[function() {
+	
+	this.youtubeLinkPattern = /https?:\/\/(?:[a-zA_Z]{2,3}.)?(?:youtube\.com\/watch\?)((?:[\w\d\-\_\=]+&amp;(?:amp;)?)*v(?:&lt;[A-Z]+&gt;)?=([0-9a-zA-Z\-\_]+))/i;
+	
 	this.getEmbedVideoUrlFromNormalUrl = function(url){
 		if(url == undefined)
 			return '';

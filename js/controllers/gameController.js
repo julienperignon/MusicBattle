@@ -20,6 +20,7 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
   $scope.playersWhoVotedForSong1 = [];
   $scope.playersWhoVotedForSong2 = [];
   $scope.theme = null;
+  $scope.youtubeLinkPattern = youtubeService.youtubeLinkPattern;
   
   //Scope functions
   $scope.chooseSong = function(){
@@ -112,5 +113,11 @@ angular.module('musicBattleApp').controller('GameController',['$scope','$rootSco
     function(newValue) {
       $scope.theme = newValue;
     }
-  );
+  )
+  
+  //  $scope.$watch(function(scope) { return youtubeService.youtubeLinkPattern },
+  //   function(newValue) {
+  //     $scope.youtubeLinkPattern = newValue;
+  //   }
+  // );
 }]);

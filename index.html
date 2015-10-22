@@ -82,10 +82,16 @@
 		<!-- Song selection -->
 		<div ng-controller="GameController" ng-show="mustChooseSong" >
 			mustChooseSong : {{mustChooseSong}}<br />
-			<form  name="songForm" ng-submit="chooseSong()">	
+			<form  name="songForm" ng-submit="songForm.$valid && chooseSong()">	
 				You must choose a song (requires youtube link): <br />
 				The theme is : <b>{{theme}}</b>
 				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="songLink" ng-model="songLink" />
+				<input type="text" ng-pattern="youtubeLinkPattern" required  name="songLink" ng-model="songLink" />
+				
+					 <div ng-messages="songForm.songLink.$error" ng-show="songForm.$dirty" ng-messages-multiple>
+						<p ng-message="pattern">URL is not a youtube link.</p>
+					</div>
+				
 			</form>
 		</div>
 		
