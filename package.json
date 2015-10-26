@@ -17,7 +17,10 @@
     "socket.io": "^1.3.6",
     "socket.io-client": "^1.3.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-exec": "^0.4.6"
+  },
   "scripts": {
     "test": "node socket.js & node web.js"
   },
