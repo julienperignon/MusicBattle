@@ -1,9 +1,11 @@
 # MusicBattle
 
-
 Battle for the best music against your friends :)
 
 
-# To launch the servers
+# Getting started
+After cloning the repository, execute the following commands : 
+* `$> npm install `  
+* `$> grunt `
 
-node socket.js & node web.js
+Then open your browser on http://localhost:8080
