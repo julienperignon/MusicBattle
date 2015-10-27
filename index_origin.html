@@ -1,0 +1,121 @@
+<html ng-app="musicBattleApp">
+	<head>
+		<title>Music Battle now !</title>
+		<!--Libraries-->	
+		<script src="node_modules/angular/angular.js"></script>
+		<script src="node_modules/angular-messages/angular-messages.min.js"></script>
+		<script src="node_modules/jquery/dist/jquery.min.js"></script>
+		<script src="node_modules/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
+		<script src="node_modules/socket.io-client/socket.io.js"></script>
+		<script src="node_modules/moment/moment.js"></script>
+		
+		<!-- Music Battle modules -->
+		<script src="js/app.js"></script>
+		
+		<!--Factories-->
+		<script src="js/factories/socketFactory.js"></script>
+		<!--Services -->
+		<script src="js/services/playerService.js"></script>
+		<script src="js/services/notificationService.js"></script>
+		<script src="js/services/chatService.js"></script>
+		<script src="js/services/configurationService.js"></script>
+		<script src="js/services/gameService.js"></script>
+		<script src="js/services/youtubeService.js"></script>
+		<script src="js/services/scoreService.js"></script>
+		
+		<!-- Controllers -->
+		<script src="js/controllers/playerController.js"></script>
+		<script src="js/controllers/chatController.js"></script>
+		<script src="js/controllers/gameController.js"></script>
+		<script src="js/controllers/scoreController.js"></script>
+		
+		<!-- CSS -->
+		<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap-theme.min.css" />
+	</head>	
+	<body>
+		
+		<!-- Game informations -->
+		<div ng-controller="GameController" ng-show="debugMode" >
+			Player 1 : {{player1}}<br />
+			Player 2 : {{player2}}<br />
+			CanPlay? : {{canPlay}}<br />
+			Playing? : {{playing}}<br />
+			ChoosingSongs? : {{choosingSongs}}<br />
+			mustChooseSong : {{mustChooseSong}}<br />
+			<!--<input type="button" ng-click="refreshRootScope" value="refresh" />-->
+		</div>
+		
+		<div ng-controller="PlayerController">
+						
+			<!--Player name selection-->
+			<div ng-hide="isLoggedIn">
+				<form  name="playerForm" ng-submit="playerForm.$valid && playerReady()">
+					Hey ! Welcome here! What's your name ?<br />
+					<input type="text" ng-model="playerName" name="playerName" required ng-minlength="4"><br />
+					
+					<!--Error messages due to form validation-->
+					 <div ng-messages="playerForm.playerName.$error" ng-show="playerForm.$dirty" ng-messages-multiple>
+						<p ng-message="minlength">Your name is too short.</p>
+						<p ng-message="required">Your name is required.</p>
+					</div>
+
+				</form>
+			</div>
+			<!--List of players playing at the moment-->
+			<div ng-show="isLoggedIn">
+					These are the players playing at the moment : 
+				<span style="display:block" ng-repeat="(key, playerName) in players">{{playerName}}</span>	
+			</div>
+			
+		</div>
+		
+		<!-- User chat -->
+		<div ng-controller="ChatController" ng-show="isLoggedIn" >	
+			<form  name="chatForm" ng-submit="sendMessage()">		
+				<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="message" ng-model="message" />
+			</form> 
+			<span style="display:block" ng-model-options="{ updateOn: 'submit'}"  ng-repeat="(key, value) in messages"><b>({{value.date}})-{{value.playerName}} </b>:{{value.message}}</span>
+			
+		</div>
+		
+		<!-- Song selection -->
+		<div ng-controller="GameController" ng-show="mustChooseSong" >
+			mustChooseSong : {{mustChooseSong}}<br />
+			<form  name="songForm" ng-submit="songForm.$valid && chooseSong()">	
+				You must choose a song (requires youtube link): <br />
+				The theme is : <b>{{theme}}</b>
+				<!--<input type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="songLink" ng-model="songLink" />-->
+				<input type="text" ng-pattern="youtubeLinkPattern" required  name="songLink" ng-model="songLink" />
+				
+					 <div ng-messages="songForm.songLink.$error" ng-show="songForm.$dirty" ng-messages-multiple>
+						<p ng-message="pattern">URL is not a youtube link.</p>
+					</div>
+				
+			</form>
+		</div>
+		
+		<div style="display-inline" ng-controller="PlayerController" ng-show="isLoggedIn">
+			<div style="display-inline" ng-controller="GameController" ng-show="playing">
+				<h3>Theme : {{theme}}</h3>
+				<div style="display:inline;width:40%" id="video1">
+					<span style="display:block">Score : {{playersWhoVotedForSong1.length}}</span>
+					<iframe width="560" height="315" ng-src="{{playing && player1Song}}" frameborder="0" allowfullscreen></iframe>
+					<input type="button" ng-show="!hasVoted && canVote" ng-click="voteForVideo(1)" value="Vote for this video" />		
+				</div>
+				<div style="display:inline;width:40%" id="video2">
+					<span style="display:block">Score : {{playersWhoVotedForSong2.length}}</span>
+					<iframe width="560" height="315" ng-src="{{playing && player2Song}}" frameborder="0" allowfullscreen></iframe>
+					<input type="button" ng-show="!hasVoted && canVote" ng-click="voteForVideo(2)" value="Vote for this video" />		
+				</div>
+			</div>
+		</div>
+		<div ng-controller="ScoreController" >
+			<h3>Scores</h3>
+			<span style="display:block"  ng-repeat="(key, value) in scores"><b>({{value.playerName}})</b>:{{value.score}}</span>
+		</div>
+		
+	</body>
+	
+</html>
+	
