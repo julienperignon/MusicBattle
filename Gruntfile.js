@@ -4,13 +4,17 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     exec: {
-      start_app : 'node socket.js & node web.js',
+      start_socket_server : 'node socket.js',
+      start_web_server : 'node web.js',
+    },
+    concurrent: {
+        run_app: ['exec:start_socket_server', 'exec:start_web_server'],
     }
   });
   
   grunt.loadNpmTasks('grunt-exec');
-
+  grunt.loadNpmTasks('grunt-concurrent');
+  
   // Default task(s).
-  grunt.registerTask('default', ['exec:start_app']);
-
+  grunt.registerTask('default', ['concurrent:run_app']);
 };
