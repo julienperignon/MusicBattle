@@ -9,11 +9,12 @@ module.exports = function (grunt) {
     },
     concurrent: {
       run_app: ['exec:start_socket_server', 'exec:start_web_server'],
+      run_app_dev: ['exec:start_socket_server', 'exec:start_web_server', 'watch']
     },
     bowerInstall: {
-      target: { 
+      target: {
         src: [
-          'index.html', 
+          'index.html',
         ],
  
         // Optional: 
@@ -26,13 +27,32 @@ module.exports = function (grunt) {
         ignorePath: '',
         overrides: {}
       }
+    },
+    watch: {
+      // livereload: true,
+      options: {
+          livereload: true
+        },
+      scripts: {
+        files: ['js/*.js'],
+        // tasks: ['jshint'],
+        options: {
+          spawn: false,
+        },
+      },
+      html: {
+        files: ['index.html', 'css/*.css']
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-bower-install');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   
   // Default task(s).
   grunt.registerTask('default', ['bowerInstall', 'concurrent:run_app']);
+
+  grunt.registerTask('dev', ['bowerInstall', 'concurrent:run_app_dev']);
 };
