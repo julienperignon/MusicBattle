@@ -115,13 +115,14 @@
 
 					</form>
 				</div>
-				<!--List of players playing at the moment-->
+				<!--List of players connecting at the moment-->
 				<div ng-show="isLoggedIn">
 					<span style="display:block" ng-repeat="(key, playerName) in players">{{playerName}}</span>
 				</div>
 
 			</div>
-
+						
+			<!-- Scores, stay even after player disconnects -->
 			<h3>Scores</h3>
 			<div ng-controller="ScoreController">
 				<span style="display:block" ng-repeat="(key, value) in scores"><b>({{value.playerName}})</b>:{{value.score}}</span>
@@ -134,6 +135,7 @@
 					<input id="chat" type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="message" ng-model="message" />
 				</form>
 				<span style="display:block" ng-model-options="{ updateOn: 'submit'}" ng-repeat="(key, value) in messages"><b>({{value.date}})-{{value.playerName}} </b>:{{value.message}}</span>
+				<!-- TODO Add smileys selection and transformation -->
 			</div>
 		</div>
 		<!-- /#sidebar-wrapper -->
@@ -159,8 +161,6 @@
 
 								<!-- Song selection -->
 								<div ng-controller="GameController" ng-show="mustChooseSong">
-									mustChooseSong : {{mustChooseSong}}
-									<br />
 									<form name="songForm" ng-submit="songForm.$valid && chooseSong()">
 										You must choose a song (requires youtube link):
 										<br /> The theme is : <b>{{theme}}</b>
@@ -175,13 +175,17 @@
 								</div>
 
 								<div style="display-inline" ng-controller="PlayerController" ng-show="isLoggedIn">
+							
 									<div style="display-inline" ng-controller="GameController" ng-show="playing">
+								<!-- Theme display -->
 										<h3>Theme : {{theme}}</h3>
+								<!--Player 1 video -->
 										<div style="display:inline;width:40%" id="video1">
 											<span style="display:block">Score : {{playersWhoVotedForSong1.length}}</span>
 											<iframe width="560" height="315" ng-src="{{playing && player1Song}}" frameborder="0" allowfullscreen></iframe>
 											<input type="button" ng-show="!hasVoted && canVote" ng-click="voteForVideo(1)" value="Vote for this video" />
 										</div>
+								<!--Player 2 video -->
 										<div style="display:inline;width:40%" id="video2">
 											<span style="display:block">Score : {{playersWhoVotedForSong2.length}}</span>
 											<iframe width="560" height="315" ng-src="{{playing && player2Song}}" frameborder="0" allowfullscreen></iframe>
