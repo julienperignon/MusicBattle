@@ -1,9 +1,9 @@
 #wrapper {
-	padding-left: 400px;
+	padding-left: 350px;
 }
 
 #sidebar-wrapper {
-	width: 400px;
+	width: 350px;
 	color: white;
 	background-color: steelblue;
 }
@@ -12,7 +12,7 @@
 
 #sidebar-wrapper input#chat[type="text"] {
 	color: black;
-	width: 380px;
+	width: 330px;
 	position: absolute;
 	left: 7px;
 	bottom: 7px;

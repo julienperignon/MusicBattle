@@ -10,15 +10,16 @@
 	<meta name="author" content="">
 
 	<title>Music Battle now !</title>
-	
+
 	<script src="//localhost:35729/livereload.js"></script>
-	
+
 	<!-- bower:js -->
 	<script src="bower_components/jquery/dist/jquery.js"></script>
 	<script src="bower_components/angular/angular.js"></script>
 	<script src="bower_components/angular-messages/angular-messages.js"></script>
 	<script src="bower_components/noty/js/noty/packaged/jquery.noty.packaged.js"></script>
 	<script src="bower_components/moment/moment.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 	<!-- endbower -->
 
 	<!--Libraries-->
@@ -45,11 +46,15 @@
 	<script src="js/controllers/scoreController.js"></script>
 
 	<!-- CSS -->
-	<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap-theme.min.css" />
+	<!--<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />-->
+	<!--<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap-theme.min.css" />-->
 
 	<!-- Bootstrap Core CSS -->
-	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
+
+	<!-- bower:css -->
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+	<!-- endbower -->
 
 	<!-- Custom CSS -->
 	<link href="css/simple-sidebar.css" rel="stylesheet">
@@ -66,8 +71,28 @@
 </head>
 
 <body>
-
 	<div id="wrapper">
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel" style="text-align:center;">Hey, welcome here !</h4>
+					</div>
+					<div class="modal-body" style="text-align:center;">
+						What's your name ?
+						<br />
+						<br />
+						<input type="text" ng-model="playerName" name="playerName" required ng-minlength="4">
+					</div>
+					<div class="modal-footer" style="text-align: center;">
+						<!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+						<button type="button" class="btn btn-primary">Login</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<!-- Sidebar -->
 		<div id="sidebar-wrapper">
@@ -186,6 +211,14 @@
 				(label == "<<") ? $("#menu-toggle").text(">>") : $("#menu-toggle").text("<<"); 
 			e.preventDefault();
 			$("#wrapper").toggleClass("toggled");
+		});
+		
+		$(document).ready(function(){
+			$('#myModal').on('shown.bs.modal', function () {
+				$('#myInput').focus()
+			});
+			
+			$('#myModal').modal();
 		});
 	</script>
 
