@@ -20,7 +20,6 @@
 	<script src="bower_components/noty/js/noty/packaged/jquery.noty.packaged.js"></script>
 	<script src="bower_components/moment/moment.js"></script>
 	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-	
 	<!-- endbower -->
 
 	<!--Libraries-->
@@ -45,6 +44,7 @@
 	<script src="js/controllers/chatController.js"></script>
 	<script src="js/controllers/gameController.js"></script>
 	<script src="js/controllers/scoreController.js"></script>
+	<script src="js/controllers/loginController.js"></script>
 
 	<!-- CSS -->
 	<!--<link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" />-->
@@ -76,16 +76,23 @@
 		<!-- Modal -->
 		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 			<div class="modal-dialog" role="document">
-				<div class="modal-content">
+				<div class="modal-content" ng-controller="LoginController">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
 						<h4 class="modal-title" id="myModalLabel" style="text-align:center;">Hey, welcome here !</h4>
 					</div>
 					<div class="modal-body" style="text-align:center;">
-						What's your name ?
-						<br />
-						<br />
-						<input type="text" ng-model="playerName" name="playerName" required ng-minlength="4">
+						<form name="loginForm" ng-submit="loginForm.$valid && login()">
+							What's your name ?
+							<br />
+							<br />
+							<!--Error messages due to form validation-->
+							<div class="loginErrors" ng-messages="loginForm.playerName.$error" ng-show="loginForm.$dirty" ng-messages-multiple>
+								<p ng-message="minlength">Your name is too short.</p>
+								<p ng-message="required">Your name is required.</p>
+							</div>
+							<input type="text" ng-model="playerName" name="playerName" required ng-minlength="4">
+						</form>
 					</div>
 					<div class="modal-footer" style="text-align: center;">
 						<!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
@@ -97,36 +104,27 @@
 
 		<!-- Sidebar -->
 		<div id="sidebar-wrapper">
-
 			<div ng-controller="PlayerController">
-				<h3>Connected players</h3>
-				<!--Player name selection-->
-				<div ng-hide="isLoggedIn">
-					<form name="playerForm" ng-submit="playerForm.$valid && playerReady()">
-						Hey ! Welcome here! What's your name ?
-						<br />
-						<input type="text" ng-model="playerName" name="playerName" required ng-minlength="4">
-						<br />
-
-						<!--Error messages due to form validation-->
-						<div ng-messages="playerForm.playerName.$error" ng-show="playerForm.$dirty" ng-messages-multiple>
-							<p ng-message="minlength">Your name is too short.</p>
-							<p ng-message="required">Your name is required.</p>
-						</div>
-
-					</form>
-				</div>
+				<h3>Online players</h3>
 				<!--List of players connecting at the moment-->
 				<div ng-show="isLoggedIn">
-					<span style="display:block" ng-repeat="(key, playerName) in players">{{playerName}}</span>
+					<table class="table table-striped">
+						<tr ng-repeat="(key, playerName) in players">
+							<td>{{playerName}}</td>
+						</tr>
+					</table>
 				</div>
-
 			</div>
-						
+
 			<!-- Scores, stay even after player disconnects -->
 			<h3>Scores</h3>
 			<div ng-controller="ScoreController">
-				<span style="display:block" ng-repeat="(key, value) in scores"><b>({{value.playerName}})</b>:{{value.score}}</span>
+				<table class="table table-striped">
+					<tr ng-repeat="(key, value) in scores">
+						<td>{{value.playerName}}</td>
+						<td class="score">{{value.score}}</td>
+					</tr>
+				</table>
 			</div>
 
 			<!-- User chat -->
@@ -141,13 +139,14 @@
 		</div>
 		<!-- /#sidebar-wrapper -->
 
-		<!-- Page Content -->
-		<div id="page-content-wrapper">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-lg-12">
-						<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">
-							<<</a>
+		<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">
+			<</a>
+
+				<!-- Page Content -->
+				<div id="page-content-wrapper">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-lg-12">
 								<!--<br /> !-- Game informations --!-->
 								<div ng-controller="GameController" ng-show="debugMode">
 									Player 1 : {{player1}}
@@ -176,17 +175,17 @@
 								</div>
 
 								<div style="display-inline" ng-controller="PlayerController" ng-show="isLoggedIn">
-							
+
 									<div style="display-inline" ng-controller="GameController" ng-show="playing">
-								<!-- Theme display -->
+										<!-- Theme display -->
 										<h3>Theme : {{theme}}</h3>
-								<!--Player 1 video -->
+										<!--Player 1 video -->
 										<div style="display:inline;width:40%" id="video1">
 											<span style="display:block">Score : {{playersWhoVotedForSong1.length}}</span>
 											<iframe width="560" height="315" ng-src="{{playing && player1Song}}" frameborder="0" allowfullscreen></iframe>
 											<input type="button" ng-show="!hasVoted && canVote" ng-click="voteForVideo(1)" value="Vote for this video" />
 										</div>
-								<!--Player 2 video -->
+										<!--Player 2 video -->
 										<div style="display:inline;width:40%" id="video2">
 											<span style="display:block">Score : {{playersWhoVotedForSong2.length}}</span>
 											<iframe width="560" height="315" ng-src="{{playing && player2Song}}" frameborder="0" allowfullscreen></iframe>
@@ -194,11 +193,11 @@
 										</div>
 									</div>
 								</div>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		<!-- /#page-content-wrapper -->
+				<!-- /#page-content-wrapper -->
 
 	</div>
 	<!-- /#wrapper -->
@@ -206,13 +205,13 @@
 	<!-- jQuery -->
 	<!--<script src="js/jquery.js"></script>-->
 
-	
+
 
 	<!-- Menu Toggle Script -->
 	<script>
 		$("#menu-toggle").click(function(e) {
 				var label = $("#menu-toggle").text();
-				(label == "<<") ? $("#menu-toggle").text(">>") : $("#menu-toggle").text("<<"); 
+				(label == "<") ? $("#menu-toggle").text(">") : $("#menu-toggle").text("<"); 
 			e.preventDefault();
 			$("#wrapper").toggleClass("toggled");
 		});
@@ -221,8 +220,6 @@
 			$('#myModal').on('shown.bs.modal', function () {
 				$('#myInput').focus()
 			});
-			
-			$('#myModal').modal();
 		});
 	</script>
 
