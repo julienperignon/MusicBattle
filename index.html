@@ -20,6 +20,7 @@
 	<script src="bower_components/noty/js/noty/packaged/jquery.noty.packaged.js"></script>
 	<script src="bower_components/moment/moment.js"></script>
 	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+	<script src="bower_components/emojify.js/dist/js/emojify.js"></script>
 	<!-- endbower -->
 
 	<!--Libraries-->
@@ -72,7 +73,7 @@
 </head>
 
 <body>
-	<div id="wrapper">
+	<div id="wrapper" ng-controller="GameController">
 		<!-- Modal -->
 		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 			<div class="modal-dialog" role="document">
@@ -96,12 +97,11 @@
 					</div>
 					<div class="modal-footer" style="text-align: center;">
 						<!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-						<button type="button" class="btn btn-primary">Login</button>
+						<!--<button type="button" class="btn btn-primary">Login</button>-->
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<!-- Sidebar -->
 		<div id="sidebar-wrapper">
 			<div ng-controller="PlayerController">
@@ -110,7 +110,7 @@
 				<div ng-show="isLoggedIn">
 					<table class="table table-striped">
 						<tr ng-repeat="(key, playerName) in players">
-							<td>{{playerName}}</td>
+							<td ng-class="{true:'bold', 'false':''}[player1 == playerName || player2 == playerName]">{{playerName}}</td>
 						</tr>
 					</table>
 				</div>
@@ -130,17 +130,16 @@
 			<!-- User chat -->
 			<h3>Chat</h3>
 			<div ng-controller="ChatController" ng-show="isLoggedIn">
-				<form name="chatForm" ng-submit="sendMessage()">
+				<form name="chatForm" id="chatForm" ng-submit="sendMessage()">
 					<input id="chat" type="text" ng-model-options="{ updateOn: 'submit default blur'}" name="message" ng-model="message" />
 				</form>
-				<span style="display:block" ng-model-options="{ updateOn: 'submit'}" ng-repeat="(key, value) in messages"><b>({{value.date}})-{{value.playerName}} </b>:{{value.message}}</span>
+				<div ng-bind-html-unsafe style="display:block" ng-model-options="{ updateOn: 'submit'}" ng-repeat="(key, value) in messages"><b>({{value.date}}) {{value.playerName}}</b>: {{value.message}}</div>
 				<!-- TODO Add smileys selection and transformation -->
 			</div>
 		</div>
 		<!-- /#sidebar-wrapper -->
 
-		<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">
-			<</a>
+		<a href="#menu-toggle" class="btn btn-default" id="menu-toggle"><</a>
 
 				<!-- Page Content -->
 				<div id="page-content-wrapper">
@@ -148,7 +147,7 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<!--<br /> !-- Game informations --!-->
-								<div ng-controller="GameController" ng-show="debugMode">
+								<div ng-show="debugMode">
 									Player 1 : {{player1}}
 									<br /> Player 2 : {{player2}}
 									<br /> CanPlay? : {{canPlay}}
@@ -160,7 +159,7 @@
 								</div>
 
 								<!-- Song selection -->
-								<div ng-controller="GameController" ng-show="mustChooseSong">
+								<div ng-show="mustChooseSong">
 									<form name="songForm" ng-submit="songForm.$valid && chooseSong()">
 										You must choose a song (requires youtube link):
 										<br /> The theme is : <b>{{theme}}</b>
@@ -173,22 +172,27 @@
 
 									</form>
 								</div>
+								<div ng-show="!mustChooseSong && playing">
+									{{player1}} and {{player2}} are currently chosing their song. Be patient :)
+								</div>
 
 								<div style="display-inline" ng-controller="PlayerController" ng-show="isLoggedIn">
 
-									<div style="display-inline" ng-controller="GameController" ng-show="playing">
+									<div style="display-inline" ng-show="playing">
 										<!-- Theme display -->
 										<h3>Theme : {{theme}}</h3>
 										<!--Player 1 video -->
 										<div style="display:inline;width:40%" id="video1">
-											<span style="display:block">Score : {{playersWhoVotedForSong1.length}}</span>
+											<span style="display:block"><b>{{player1}}</b>'s choice' </span> 
 											<iframe width="560" height="315" ng-src="{{playing && player1Song}}" frameborder="0" allowfullscreen></iframe>
+											<span style="display:block"><b>Score :</b> {{playersWhoVotedForSong1.length}}</span>
 											<input type="button" ng-show="!hasVoted && canVote" ng-click="voteForVideo(1)" value="Vote for this video" />
 										</div>
 										<!--Player 2 video -->
 										<div style="display:inline;width:40%" id="video2">
-											<span style="display:block">Score : {{playersWhoVotedForSong2.length}}</span>
+											<span style="display:block"><b>{{player2}}</b>'s choice' </span> 
 											<iframe width="560" height="315" ng-src="{{playing && player2Song}}" frameborder="0" allowfullscreen></iframe>
+											<span style="display:block"><b>Score :</b> {{playersWhoVotedForSong2.length}}</span>
 											<input type="button" ng-show="!hasVoted && canVote" ng-click="voteForVideo(2)" value="Vote for this video" />
 										</div>
 									</div>
@@ -205,8 +209,6 @@
 	<!-- jQuery -->
 	<!--<script src="js/jquery.js"></script>-->
 
-
-
 	<!-- Menu Toggle Script -->
 	<script>
 		$("#menu-toggle").click(function(e) {
@@ -220,9 +222,12 @@
 			$('#myModal').on('shown.bs.modal', function () {
 				$('#myInput').focus()
 			});
+			emojify.setConfig({img_dir : 'bower_components/emojify.js/dist/images/basic/'})
 		});
+		
+		
 	</script>
-
+	
 </body>
 
 </html>

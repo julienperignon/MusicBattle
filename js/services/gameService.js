@@ -58,6 +58,9 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 		else if(data.result === 'LOSS'){
 			notificationService.displayInformation('You lost the round :( Maybe next round ? :)');
 		}
+		else if(data.result === 'DRAW'){
+			notificationService.displayInformation('You didn\'t win nor lost !');
+		}
 	});
 	
 	//the player received the result of the current round
@@ -65,7 +68,13 @@ app.service('gameService', ['$http','socketFactory','configurationService','noti
 		self.mustChooseSong = false;
 		self.canVote = true;
 		self.hasVoted = false;
-		notificationService.displayInformation(data.winner + ' won the round ! Next round coming soon !');
+		if(data.result == 'player1Won' || data.result == 'player2Won'){
+			notificationService.displayInformation(data.winner + ' won the round ! Next round coming soon !');
+		}
+		else if(data.result == 'draw' ){
+			notificationService.displayInformation('Nobody won , it\'s a draw ! ');
+		}
+		
 	});
 	
 	

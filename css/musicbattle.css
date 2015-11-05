@@ -42,3 +42,13 @@
 	border: 0;
 	background-color:#5890BE;
 }
+.bold{
+	font-weight: bold;
+}
+
+.emoji {
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+    margin-bottom: -0.25em;
+}

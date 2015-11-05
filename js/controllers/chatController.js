@@ -1,3 +1,4 @@
+/* global emojify */
 /* global angular */
 //Chat controller
 //Handles(inbound and outbound) messages for the chat
@@ -28,5 +29,15 @@ angular.module('musicBattleApp').controller('ChatController',['$scope',"chatServ
 		chatService.sendMessage($scope.message);
 		$scope.message = null;
 	}
+	
+	var hasRegistered = false;
+		$scope.$watch(function() {
+		if (hasRegistered) return;
+		hasRegistered = true;
+		$scope.$$postDigest(function() {
+			hasRegistered = false;
+			emojify.run();
+		});
+	});
 	
 }]);

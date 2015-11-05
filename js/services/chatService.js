@@ -1,3 +1,4 @@
+/* global emojify */
 /* global moment */
 /* global app */
 /* global factory */

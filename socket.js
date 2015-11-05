@@ -214,7 +214,7 @@ function updateGameStatus(){
        if(self.playersWhoVotedForSong1.length === self.playersWhoVotedForSong2.length){
            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'DRAW'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'DRAW'});
-           io.emit('server:game:result',{winner:'DRAW'});
+           io.emit('server:game:result',{result:'draw'});
            
        }
        //Player 1 won
@@ -224,7 +224,7 @@ function updateGameStatus(){
            self.scores[self.player1] =  self.scores[self.player1] + 1;
            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'WIN'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'LOSS'});
-           io.emit('server:game:result',{winner: self.player1});
+           io.emit('server:game:result',{result:'player1Won',winner: self.player1});
        }
        //Player 2 won
        else if(self.playersWhoVotedForSong1.length > self.playersWhoVotedForSong2.length){
@@ -232,7 +232,7 @@ function updateGameStatus(){
            self.scores[self.player2] =  self.scores[self.player2] + 1;
            io.to(self.sockets[self.player1].id).emit('server:game:ownresult',{result:'LOSS'});
            io.to(self.sockets[self.player2].id).emit('server:game:ownresult',{result:'WIN'});
-           io.emit('server:game:result',{winner: self.player2});
+           io.emit('server:game:result',{result:'player2Won',winner: self.player2});
        }
        
        //TODO ADD Tempo with io message
